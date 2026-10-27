@@ -1,0 +1,6 @@
+@Linetech_HostAddress = http://localhost:5251
+
+GET {{Linetech_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
