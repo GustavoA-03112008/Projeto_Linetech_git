@@ -1,0 +1,88 @@
+/* src/pages/configuracoes/configuracoesStyle.css */
+
+.configuracoes-page .dashboard-content {
+  padding: 32px 36px;
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.configuracoes-page .page-title {
+  color: #0d465c;
+  font-size: 24px;
+  margin: 0 0 24px 0;
+  font-weight: 700;
+}
+
+.configuracoes-page .section-title {
+  color: #0d465c;
+  font-size: 17px;
+  font-weight: 700;
+  margin: 24px 0 16px 0;
+}
+
+.configuracoes-page .section-title:first-of-type {
+  margin-top: 0;
+}
+
+.configuracoes-page .form-group {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.configuracoes-page .form-label {
+  color: #688596;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.configuracoes-page .form-input {
+  width: 100%;
+  border: 1px solid #d8ecf2 !important;
+  border-radius: 8px;
+  padding: 12px 16px !important;
+  font-size: 14px;
+  color: #688596;
+  background-color: #f4fbfd !important;
+  box-sizing: border-box;
+  outline: none !important;
+}
+
+.configuracoes-page .input-password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.configuracoes-page .password-toggle-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.configuracoes-page .password-toggle-icon:hover {
+  opacity: 1;
+}
+
+.configuracoes-page .btn-salvar-alteracoes {
+  width: 100%;
+  background-color: #0a4f68;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 24px;
+  transition: background-color 0.2s ease;
+}
+
+.configuracoes-page .btn-salvar-alteracoes:hover {
+  background-color: #073a4d;
+}

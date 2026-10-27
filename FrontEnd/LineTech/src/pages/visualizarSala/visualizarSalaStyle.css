@@ -1,0 +1,283 @@
+/* src/pages/visualizarSala/visualizarSalaStyle.css */
+
+.visualizar-sala-page.dashboard-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background-color: #f4fbfd;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Sidebar */
+.visualizar-sala-page .sidebar {
+  width: 240px;
+  background-color: #f4fbfd;
+  border-right: 1px solid #e1f0f5;
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  flex-shrink: 0;
+}
+
+.visualizar-sala-page .sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px;
+}
+
+.visualizar-sala-page .menu-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 18px;
+  border-radius: 10px;
+  color: #688596;
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.visualizar-sala-page .menu-item.active {
+  background-color: #d8f1f7;
+  color: #1b89a8;
+  font-weight: 600;
+}
+
+.visualizar-sala-page .menu-icon {
+  margin-right: 14px;
+}
+
+/* Conteúdo Principal & Topbar */
+.visualizar-sala-page .main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: #f4fbfd;
+}
+
+.visualizar-sala-page .topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 36px;
+  background-color: #f4fbfd;
+  border-bottom: 1px solid #e1f0f5;
+  gap: 20px;
+}
+
+.visualizar-sala-page .search-container {
+  display: flex;
+  align-items: center;
+  background-color: #edf8fa;
+  border: 1px solid #d4ebf2;
+  border-radius: 8px;
+  padding: 8px 16px;
+  flex: 1;
+  max-width: 1000px;
+}
+
+.visualizar-sala-page .search-input {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent;
+  width: 100%;
+  margin-left: 10px !important;
+  padding: 0 !important;
+  color: #688596;
+  font-size: 14px;
+}
+
+.visualizar-sala-page .search-input::placeholder {
+  color: #93b0c0;
+}
+
+.visualizar-sala-page .topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: #0d465c;
+}
+
+.visualizar-sala-page .profile-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #0d465c;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Conteúdo da Área de Trabalho */
+.visualizar-sala-page .dashboard-content {
+  padding: 32px 36px;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.visualizar-sala-page .page-title {
+  color: #0d465c;
+  font-size: 24px;
+  margin: 0 0 24px 0;
+  font-weight: 700;
+}
+
+/* Cartão Principal */
+.visualizar-sala-page .status-card {
+  background-color: #f4fbfd;
+  border: 1px solid #d8ecf2;
+  border-radius: 12px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Secção Superior da Sala */
+.visualizar-sala-page .room-details-header {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.visualizar-sala-page .room-icon-box {
+  width: 80px;
+  height: 80px;
+  background-color: #dcf2f7;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.visualizar-sala-page .room-info-content h2 {
+  color: #0d465c;
+  font-size: 22px;
+  margin: 0 0 6px 0;
+  font-weight: 700;
+}
+
+.visualizar-sala-page .status-tag {
+  color: #688596;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.visualizar-sala-page .status-tag span {
+  color: #1b89a8;
+  font-weight: 600;
+}
+
+.visualizar-sala-page .subject-title {
+  color: #7997a8;
+  font-size: 15px;
+  margin: 0 0 6px 0;
+}
+
+.visualizar-sala-page .prof-name {
+  color: #7997a8;
+  font-size: 15px;
+  margin: 0 0 12px 0;
+}
+
+.visualizar-sala-page .meta-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.visualizar-sala-page .meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #7997a8;
+  font-size: 14px;
+}
+
+/* Secção do Status de Liberação */
+.visualizar-sala-page .liberation-section {
+  border-top: 1px solid #e1f0f5;
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.visualizar-sala-page .liberation-section h3 {
+  color: #0d465c;
+  font-size: 16px;
+  margin: 0;
+  font-weight: 700;
+}
+
+/* Barra de Progresso */
+.visualizar-sala-page .progress-bar-container {
+  width: 100%;
+  height: 16px;
+  background-color: #d8f1f7;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.visualizar-sala-page .progress-bar-fill {
+  height: 100%;
+  width: 68%; /* Progresso visual correspondente à imagem */
+  background-color: #00a8cc;
+  border-radius: 20px;
+}
+
+/* Linha do Tempo Restante */
+.visualizar-sala-page .time-remaining-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.visualizar-sala-page .time-label {
+  color: #7997a8;
+  font-size: 14px;
+}
+
+.visualizar-sala-page .time-value {
+  color: #0d465c;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Botão Principal */
+.visualizar-sala-page .btn-detalhes-reserva {
+  width: 100%;
+  background-color: #0a4f68;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.visualizar-sala-page .btn-detalhes-reserva:hover {
+  background-color: #073a4d;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .visualizar-sala-page .room-details-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

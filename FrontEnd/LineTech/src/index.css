@@ -1,0 +1,178 @@
+/* src/index.css - Responsividade Global */
+
+@media (max-width: 992px) {
+  .dashboard-container .sidebar {
+    width: 80px !important;
+  }
+
+  .dashboard-container .menu-item {
+    font-size: 0 !important;
+    justify-content: center !important;
+    padding: 15px !important;
+  }
+
+  .dashboard-container .menu-icon {
+    margin-right: 0 !important;
+  }
+
+  .dashboard-container .sidebar-footer {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column !important;
+  }
+
+  .dashboard-container .sidebar {
+    width: 100% !important;
+    flex-direction: row !important;
+    border-right: none !important;
+    border-bottom: 1px solid #e0f0f5 !important;
+    padding: 0 !important;
+  }
+
+  .dashboard-container .sidebar-menu {
+    flex-direction: row !important;
+    justify-content: space-around !important;
+    padding: 10px !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .dashboard-container .topbar {
+    flex-direction: column !important;
+    gap: 15px !important;
+    padding: 15px 20px !important;
+  }
+
+  .dashboard-container .search-container {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .dashboard-container .dashboard-content {
+    padding: 20px !important;
+  }
+}
+
+/* ==============================================================
+   CSS PARTILHADO - ESTRUTURA, SIDEBAR E TOPBAR (GLOBAL)
+   ============================================================== */
+
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background-color: #f4fbfd;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* SIDEBAR GLOBAL (Exatamente igual às imagens) */
+.sidebar {
+  width: 240px;
+  background-color: #f4fbfd;
+  border-right: 1px solid #e1f0f5;
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  flex-shrink: 0;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 18px;
+  border-radius: 10px;
+  color: #688596;
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.menu-item.active {
+  background-color: #d8f1f7;
+  color: #1b89a8;
+  font-weight: 600;
+}
+
+.menu-icon {
+  margin-right: 14px;
+}
+
+/* MAIN CONTENT E TOPBAR GLOBAL */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: #f4fbfd;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 36px;
+  background-color: #f4fbfd;
+  border-bottom: 1px solid #e1f0f5;
+  gap: 20px;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  background-color: #edf8fa;
+  border: 1px solid #d4ebf2;
+  border-radius: 8px;
+  padding: 8px 16px;
+  flex: 1;
+  max-width: 1000px;
+}
+
+.search-input {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent;
+  width: 100%;
+  margin-left: 10px !important;
+  padding: 0 !important;
+  color: #688596;
+  font-size: 14px;
+}
+
+.search-input::placeholder {
+  color: #93b0c0;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: #0d465c;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #0d465c;
+  font-size: 14px;
+  cursor: pointer;
+}
