@@ -1,0 +1,99 @@
+/* src/pages/historicoReserva/historicoReservaStyle.css */
+
+.historico-reserva-page .dashboard-content {
+  padding: 32px 36px;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.historico-reserva-page .page-title {
+  color: #0d465c;
+  font-size: 24px;
+  margin: 0 0 24px 0;
+  font-weight: 700;
+}
+
+.historico-reserva-page .tabs-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.historico-reserva-page .tab-button {
+  background-color: #f4fbfd;
+  border: 1px solid #d8ecf2;
+  border-radius: 8px;
+  padding: 12px;
+  color: #688596;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.historico-reserva-page .tab-button.active {
+  background-color: #0a4f68;
+  color: #ffffff;
+  border-color: #0a4f68;
+}
+
+.historico-reserva-page .reservas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.historico-reserva-page .reserva-card-item {
+  background-color: #f4fbfd;
+  border: 1px solid #d8ecf2;
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.historico-reserva-page .reserva-card-item:hover {
+  border-color: #1b89a8;
+}
+
+.historico-reserva-page .reserva-card-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.historico-reserva-page .reserva-icon-box {
+  width: 52px;
+  height: 52px;
+  background-color: #dcf2f7;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.historico-reserva-page .reserva-card-info h2 {
+  color: #0d465c;
+  font-size: 17px;
+  margin: 0 0 4px 0;
+  font-weight: 700;
+}
+
+.historico-reserva-page .reserva-data,
+.historico-reserva-page .reserva-atividade {
+  color: #7997a8;
+  font-size: 13px;
+  margin: 0 0 2px 0;
+}
+
+.historico-reserva-page .arrow-icon {
+  color: #1b89a8;
+  font-size: 18px;
+  font-weight: bold;
+}
