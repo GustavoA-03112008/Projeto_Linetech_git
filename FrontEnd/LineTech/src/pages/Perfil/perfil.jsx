@@ -27,7 +27,7 @@ export default function Perfil() {
             <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/688596/document--v1.png" alt="Solicitações" />
             Solicitações
           </div>
-          <div className="menu-item" onClick={() => navigate('/perfil')}>
+          <div className="menu-item active" onClick={() => navigate('/perfil')}>
             <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/1b89a8/user--v1.png" alt="Perfil" />
             Perfil
           </div>
@@ -47,7 +47,7 @@ export default function Perfil() {
           <div className="topbar-actions">
             <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/appointment-reminders.png" alt="Notificações" />
             <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/mail.png" alt="Mensagens" />
-            <div className="profile-section">
+            <div className="profile-section" onClick={() => navigate('/perfil')}>
               <img width="28" height="28" src="https://img.icons8.com/material-rounded/28/1b89a8/user-male-circle.png" alt="Usuário" />
               Prof. Carlos <span style={{ fontSize: '9px', marginLeft: '3px' }}>▼</span>
             </div>
@@ -57,6 +57,27 @@ export default function Perfil() {
         {/* CONTEÚDO DA PÁGINA */}
         <div className="dashboard-content">
           
+          {/* TÍTULO COM BOTÃO VOLTAR */}
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '12px', 
+            marginBottom: '20px', 
+            width: '100%', 
+            justifyContent: 'flex-start',
+            alignSelf: 'flex-start' 
+          }}>
+            <img 
+              width="24" 
+              height="24" 
+              src="https://img.icons8.com/material-outlined/24/1b89a8/back--v1.png" 
+              alt="Voltar" 
+              style={{ cursor: 'pointer' }}
+              onClick={() => navigate(-1)} 
+            />
+            <h1 className="page-title" style={{ margin: 0 }}>Perfil</h1>
+          </div>
+
           {/* CABEÇALHO DO PERFIL */}
           <div className="profile-header">
             <div className="profile-avatar-box">

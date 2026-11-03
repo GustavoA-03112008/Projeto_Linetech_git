@@ -24,7 +24,7 @@ export default function SolicitarAcesso() {
             <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/688596/door.png" alt="Salas" />
             Salas
           </div>
-          <div className="menu-item" onClick={() => navigate('/solicitacoes')}>
+          <div className="menu-item active" onClick={() => navigate('/solicitacoes')}>
             <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/1b89a8/document--v1.png" alt="Solicitações" />
             Solicitações
           </div>
@@ -48,7 +48,7 @@ export default function SolicitarAcesso() {
           <div className="topbar-actions">
             <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/appointment-reminders.png" alt="Notificações" />
             <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/mail.png" alt="Mensagens" />
-            <div className="profile-section">
+            <div className="profile-section" onClick={() => navigate('/perfil')}>
               <img width="28" height="28" src="https://img.icons8.com/material-rounded/28/1b89a8/user-male-circle.png" alt="Usuário" />
               Prof. Carlos <span style={{ fontSize: '9px', marginLeft: '3px' }}>▼</span>
             </div>
@@ -57,7 +57,19 @@ export default function SolicitarAcesso() {
 
         {/* CONTEÚDO DA PÁGINA */}
         <div className="dashboard-content">
-          <h1 className="page-title">Solicitação de acesso</h1>
+          
+          {/* TÍTULO COM BOTÃO VOLTAR */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+            <img 
+              width="24" 
+              height="24" 
+              src="https://img.icons8.com/material-outlined/24/1b89a8/back--v1.png" 
+              alt="Voltar" 
+              style={{ cursor: 'pointer' }}
+              onClick={() => navigate(-1)} 
+            />
+            <h1 className="page-title" style={{ margin: 0 }}>Solicitação de acesso</h1>
+          </div>
 
           {/* ABAS DE NAVEGAÇÃO */}
           <div className="tabs-container">
@@ -105,7 +117,7 @@ export default function SolicitarAcesso() {
                     Reunião de equipe
                   </div>
                 </div>
-                <div className="arrow-link" onClick={() => navigate('/detalhes')}>
+                <div className="arrow-link" onClick={() => navigate('/detalhes')} style={{ cursor: 'pointer' }}>
                   {'>'}
                 </div>
               </div>
@@ -141,7 +153,7 @@ export default function SolicitarAcesso() {
                     Aula prática
                   </div>
                 </div>
-                <div className="arrow-link" onClick={() => navigate('/detalhes')}>
+                <div className="arrow-link" onClick={() => navigate('/detalhes')} style={{ cursor: 'pointer' }}>
                   {'>'}
                 </div>
               </div>
@@ -165,7 +177,7 @@ export default function SolicitarAcesso() {
           </button>
 
           <p className="account-footer-text">
-            Não tem uma conta? <span onClick={() => navigate('/detalhes')}>Solicitar acesso</span>
+            Não tem uma conta? <span onClick={() => navigate('/detalhes')} style={{ cursor: 'pointer' }}>Solicitar acesso</span>
           </p>
 
         </div>

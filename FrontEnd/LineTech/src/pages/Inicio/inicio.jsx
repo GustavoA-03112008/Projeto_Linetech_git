@@ -11,7 +11,7 @@ export default function Inicio() {
       {/* BARRA LATERAL (SIDEBAR) */}
       <aside className="sidebar">
         <div className="sidebar-menu">
-          <div className="menu-item active">
+          <div className="menu-item active" onClick={() => navigate('/inicio')}>
             <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/1b89a8/home--v2.png" alt="Início" />
             Início
           </div>
@@ -32,9 +32,6 @@ export default function Inicio() {
             Perfil
           </div>
         </div>
-        <div className="sidebar-footer">
-          Educação<br />que transforma
-        </div>
       </aside>
 
       {/* ÁREA PRINCIPAL */}
@@ -50,7 +47,7 @@ export default function Inicio() {
           <div className="topbar-actions">
             <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/appointment-reminders.png" alt="Notificações" />
             <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/mail.png" alt="Mensagens" />
-            <div className="profile-section">
+            <div className="profile-section" onClick={() => navigate('/perfil')}>
               <img width="28" height="28" src="https://img.icons8.com/material-rounded/28/1b89a8/user-male-circle.png" alt="Usuário" />
               Prof. Carlos <span style={{ fontSize: '9px', marginLeft: '3px' }}>▼</span>
             </div>
@@ -66,7 +63,7 @@ export default function Inicio() {
           <div className="action-grid">
             <div className="action-card" onClick={() => navigate('/gestao')}>
               <img width="36" height="36" src="https://img.icons8.com/material-outlined/48/1b89a8/calendar--v1.png" alt="Reservar sala" />
-              <h3>Gestao de Sala</h3>
+              <h3>Gestão de Sala</h3>
             </div>
 
             <div className="action-card" onClick={() => navigate('/consultar')}>
@@ -76,7 +73,7 @@ export default function Inicio() {
 
             <div className="action-card" onClick={() => navigate('/historico')}>
               <img width="36" height="36" src="https://img.icons8.com/material-outlined/48/1b89a8/paste.png" alt="Gestão de salas" />
-              <h3>Historico de Reservas</h3>
+              <h3>Histórico de Reservas</h3>
             </div>
 
             <div className="action-card" onClick={() => navigate('/solicitacoes')}>
@@ -88,7 +85,9 @@ export default function Inicio() {
           {/* PRÓXIMAS RESERVAS */}
           <div className="section-header">
             <h3>Próximas reservas</h3>
-            <span className="link-ver-todas">Ver todas</span>
+            <span className="link-ver-todas" onClick={() => navigate('/historico')} style={{ cursor: 'pointer' }}>
+              Ver todas
+            </span>
           </div>
 
           <div className="reservas-list">

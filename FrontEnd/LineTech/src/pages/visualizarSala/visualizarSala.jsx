@@ -19,7 +19,7 @@ export default function VisualizarSala() {
             <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/688596/calendar--v1.png" alt="Reservas" />
             Reservas
           </div>
-          <div className="menu-item" onClick={() => navigate('/consultar')}>
+          <div className="menu-item active" onClick={() => navigate('/consultar')}>
             <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/1b89a8/door.png" alt="Salas" />
             Salas
           </div>
@@ -47,7 +47,7 @@ export default function VisualizarSala() {
           <div className="topbar-actions">
             <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/appointment-reminders.png" alt="Notificações" />
             <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/mail.png" alt="Mensagens" />
-            <div className="profile-section">
+            <div className="profile-section" onClick={() => navigate('/perfil')}>
               <img width="28" height="28" src="https://img.icons8.com/material-rounded/28/1b89a8/user-male-circle.png" alt="Usuário" />
               Prof. Carlos <span style={{ fontSize: '9px', marginLeft: '3px' }}>▼</span>
             </div>
@@ -56,7 +56,19 @@ export default function VisualizarSala() {
 
         {/* CONTEÚDO DA PÁGINA */}
         <div className="dashboard-content">
-          <h1 className="page-title">Sala 1.34 (em uso)</h1>
+          
+          {/* TÍTULO COM BOTÃO VOLTAR */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+            <img 
+              width="24" 
+              height="24" 
+              src="https://img.icons8.com/material-outlined/24/1b89a8/back--v1.png" 
+              alt="Voltar" 
+              style={{ cursor: 'pointer' }}
+              onClick={() => navigate(-1)} 
+            />
+            <h1 className="page-title" style={{ margin: 0 }}>Sala 1.34 (em uso)</h1>
+          </div>
 
           <div className="status-card">
             
@@ -68,7 +80,9 @@ export default function VisualizarSala() {
 
               <div className="room-info-content">
                 <h2>Sala 1.34</h2>
-                <div className="status-tag">• <span>Em uso</span></div>
+                <div className="status-tag">
+                  <span>Em uso</span>
+                </div>
                 
                 <p className="subject-title">Aula de Desenvolvimento</p>
                 <p className="prof-name">Prof. Carlos Silva</p>

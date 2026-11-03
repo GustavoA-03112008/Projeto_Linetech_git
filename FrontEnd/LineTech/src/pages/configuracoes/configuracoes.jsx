@@ -60,7 +60,19 @@ export default function Configuracoes() {
 
         {/* CONTEÚDO DA PÁGINA */}
         <div className="dashboard-content">
-          <h1 className="page-title">Configurações</h1>
+          
+          {/* TÍTULO COM BOTÃO VOLTAR */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+            <img 
+              width="24" 
+              height="24" 
+              src="https://img.icons8.com/material-outlined/24/1b89a8/back--v1.png" 
+              alt="Voltar" 
+              style={{ cursor: 'pointer' }}
+              onClick={() => navigate(-1)} 
+            />
+            <h1 className="page-title" style={{ margin: 0 }}>Editar Perfil</h1>
+          </div>
 
           {/* DADOS PESSOAIS */}
           <h2 className="section-title">Dados pessoais</h2>

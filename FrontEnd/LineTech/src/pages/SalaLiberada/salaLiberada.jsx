@@ -19,7 +19,7 @@ export default function SalaLiberada() {
             <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/688596/calendar--v1.png" alt="Reservas" />
             Reservas
           </div>
-          <div className="menu-item" onClick={() => navigate('/consultar')}>
+          <div className="menu-item active" onClick={() => navigate('/consultar')}>
             <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/1b89a8/door.png" alt="Salas" />
             Salas
           </div>
@@ -55,28 +55,61 @@ export default function SalaLiberada() {
         </header>
 
         {/* CONTEÚDO DA PÁGINA */}
-        <div className="dashboard-content">
-          <div className="success-container">
-            
-            {/* ÍCONE DE SUCESSO (CHECKMARK) */}
-            <div className="check-circle">
-              <img src="https://img.icons8.com/material-outlined/48/00a8cc/checkmark.png" alt="Sucesso" />
-            </div>
+        <div className="dashboard-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minHeight: 'calc(100vh - 120px)' }}>
 
-            <h1 className="success-title">Sala liberada</h1>
-            
-            <p className="success-message">
-              A reserva foi encerrada e a sala já está disponível para novas reservas.
-            </p>
-
-            <button 
-              className="btn-ver-disponibilidades"
-              onClick={() => navigate('/consultar')}
-            >
-              Ver disponibilidades
-            </button>
-
+          {/* BOTÃO VOLTAR NO CANTO SUPERIOR ESQUERDO */}
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '12px', 
+            marginBottom: '20px',
+            width: '100%'
+          }}>
+            <img 
+              width="24" 
+              height="24" 
+              src="https://img.icons8.com/material-outlined/24/1b89a8/back--v1.png" 
+              alt="Voltar" 
+              style={{ cursor: 'pointer' }}
+              onClick={() => navigate(-1)} 
+            />
+            <h1 className="page-title" style={{ margin: 0 }}>Liberação de Sala</h1>
           </div>
+
+          {/* CARD DE SUCESSO CENTRALIZADO */}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textAlign: 'center',
+            width: '100%',
+            flex: 1
+          }}>
+            <div className="success-container" style={{ maxWidth: '450px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              
+              {/* ÍCONE DE SUCESSO */}
+              <div className="check-circle" style={{ marginBottom: '16px' }}>
+                <img src="https://img.icons8.com/material-outlined/48/00a8cc/checkmark.png" alt="Sucesso" />
+              </div>
+
+              <h1 className="success-title">Sala liberada</h1>
+              
+              <p className="success-message">
+                A reserva foi encerrada e a sala já está disponível para novas reservas.
+              </p>
+
+              <button 
+                className="btn-ver-disponibilidades"
+                style={{ width: '100%', marginTop: '20px' }}
+                onClick={() => navigate('/consultar')}
+              >
+                Ver disponibilidades
+              </button>
+
+            </div>
+          </div>
+
         </div>
       </main>
     </div>

@@ -14,13 +14,7 @@ export default function Login() {
       {/* Formas geométricas de fundo do desktop */}
       <div className="bg-shape-top-left"></div>
       <div className="bg-shape-bottom-right"></div>
-
-      {/* Cabeçalho superior esquerdo */}
-      <div className="top-left-header">
-        <img src={logoImg} alt="Logo" className="top-left-logo" />
-        SENAI
-      </div>
-
+      
       {/* Conteúdo Central */}
       <div className="content-wrapper">
         
