@@ -193,5 +193,55 @@ namespace Linetech.Controllers
 				recursoId = recursoId
 			});
 		}
+
+		// Consultar disponibilidade de uma sala em determinado período
+		[HttpGet("{id}/disponibilidade")]
+		public async Task<IActionResult> ConsultarDisponibilidade(
+			int id,
+			[FromQuery] DateTime dataInicio,
+			[FromQuery] DateTime dataFim)
+		{
+			if (dataFim <= dataInicio)
+			{
+				return BadRequest(
+					"A data final deve ser posterior à data inicial."
+				);
+			}
+
+			var sala = await _context.Salas
+				.AsNoTracking()
+				.FirstOrDefaultAsync(s => s.Id == id);
+
+			if (sala == null)
+			{
+				return NotFound("Sala não encontrada.");
+			}
+
+			if (!sala.Disponivel)
+			{
+				return Ok(new
+				{
+					salaId = id,
+					disponivel = false,
+					mensagem = "A sala está marcada como indisponível."
+				});
+			}
+
+			bool conflito = await _context.Reservas.AnyAsync(r =>
+				r.SalaId == id &&
+				(r.Status == "Pendente" ||
+				 r.Status == "Confirmada") &&
+				dataInicio < r.DataFim &&
+				dataFim > r.DataInicio);
+
+			return Ok(new
+			{
+				salaId = id,
+				disponivel = !conflito,
+				mensagem = conflito
+					? "A sala já possui uma reserva nesse período."
+					: "A sala está disponível nesse período."
+			});
+		}
 	}
 }
