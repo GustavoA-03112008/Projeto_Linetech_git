@@ -10,6 +10,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+// CONFIGURAÇÃO DO CORS PARA PERMITIR O REACT
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("PermitirReact", policy =>
+	{
+		policy
+			.WithOrigins("http://localhost:5173")
+			.AllowAnyHeader()
+			.AllowAnyMethod();
+	});
+});
+
 // CONFIGURAÇÃO DO SWAGGER COM JWT
 builder.Services.AddSwaggerGen(options =>
 {
@@ -69,6 +81,9 @@ builder.Services.AddAuthentication(
 	});
 
 var app = builder.Build();
+
+// ATIVAÇÃO DO CORS
+app.UseCors("PermitirReact");
 
 // CONFIGURAÇÃO DA INTERFACE SWAGGER
 if (app.Environment.IsDevelopment())
