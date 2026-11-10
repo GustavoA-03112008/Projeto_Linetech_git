@@ -1,5 +1,5 @@
 
-const API_URL = "http://localhost:5251";
+const API_URL = "https://localhost:7193";
 
 // FUNÇÃO PRINCIPAL PARA COMUNICAÇÃO COM A API
 export async function apiRequest(endpoint, options = {}) {
