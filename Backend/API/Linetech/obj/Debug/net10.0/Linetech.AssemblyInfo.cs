@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Linetech")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f3f6fc63cd6672ed215dba46dff479bfaeca1bef")]
 [assembly: System.Reflection.AssemblyProductAttribute("Linetech")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Linetech")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

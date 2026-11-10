@@ -22,6 +22,12 @@ namespace Linetech.Data
 
 		public DbSet<Reserva> Reservas { get; set; }
 
+		// Atividades relacionadas às reservas
+		public DbSet<Atividade> Atividades { get; set; }
+
+		// Solicitações de acesso às funções do sistema
+		public DbSet<SolicitacaoAcesso> SolicitacoesAcesso { get; set; }
+
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);

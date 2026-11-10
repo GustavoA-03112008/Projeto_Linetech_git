@@ -11,6 +11,8 @@ namespace Linetech.Models
 
 		public string SenhaHash { get; set; } = string.Empty;
 
+		public string Perfil { get; set; } = "Professor";
+
 		public bool Ativo { get; set; } = true;
 
 		public DateTime DataCriacao { get; set; }
