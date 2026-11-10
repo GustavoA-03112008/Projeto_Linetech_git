@@ -1,261 +1,645 @@
-  /* Importação da fonte Inter */
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* Importação da fonte Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-  /* ==============================================================
-    1. FORÇAR FONTE E BOX-SIZING EM TODO O SISTEMA
-    ============================================================== */
-  *, 
-  *::before, 
-  *::after, 
-  input, 
-  button, 
-  select, 
-  textarea {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-    box-sizing: border-box;
+/* ==============================================================
+   1. FORÇAR FONTE E BOX-SIZING EM TODO O SISTEMA
+   ============================================================== */
+*, 
+*::before, 
+*::after, 
+input, 
+button, 
+select, 
+textarea {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  box-sizing: border-box;
+}
+
+/* RESET DOS INPUTS */
+input,
+input[type="text"],
+input[type="password"] {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Evita que o preenchimento automático do navegador force fundo branco */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #ECFEFF inset !important;
+  -webkit-text-fill-color: #084b68 !important;
+}
+
+/* ==============================================================
+   2. ESTRUTURA PRINCIPAL E FUNDO GLOBAL (#ECFEFF)
+   ============================================================== */
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #ECFEFF !important;
+  width: 100%;
+  height: 100%;
+}
+
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background-color: #ECFEFF !important;
+  overflow: hidden;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* SIDEBAR GLOBAL (DESKTOP) */
+.sidebar {
+  width: 240px;
+  max-width: 240px;
+  background-color: #ECFEFF !important;
+  border-right: 1.5px solid #a5e3f0 !important;
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  flex-shrink: 0;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 18px;
+  border-radius: 12px;
+  color: #688596;
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.menu-item:hover {
+  background-color: #dcf7fa;
+  color: #1b89a8;
+}
+
+.menu-item.active {
+  background-color: #cbf1f6 !important;
+  color: #1b89a8 !important;
+  font-weight: 700;
+}
+
+.menu-icon {
+  margin-right: 14px;
+}
+
+/* ÁREA PRINCIPAL E TOPBAR GLOBAL */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: #ECFEFF !important;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 30px;
+  background-color: #ECFEFF !important;
+  border-bottom: 1.5px solid #a5e3f0 !important;
+  box-sizing: border-box;
+}
+
+/* BARRA DE PESQUISA EXPANDIDA (DESKTOP) */
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #ECFEFF !important;
+  border: 1.5px solid #a5e3f0 !important;
+  border-radius: 14px !important;
+  padding: 10px 18px;
+  height: 56px !important;
+  box-sizing: border-box;
+  width: 500px !important;
+}
+
+.search-input {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  width: 100%;
+  font-size: 16px !important;
+  color: #084b68;
+}
+
+.search-input::placeholder {
+  color: #688596;
+}
+
+.search-container img,
+.search-container svg,
+.search-container i {
+  width: 22px !important;
+  height: 22px !important;
+  font-size: 22px !important;
+  color: #1b89a8 !important;
+  flex-shrink: 0;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: #0d465c;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #0d465c;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ==============================================================
+   3. CARTÕES E CONTAINERS (#ECFEFF)
+   ============================================================== */
+.action-card,
+.card-atalho,
+.filter-card,
+.room-card,
+.info-card,
+.details-card,
+.historico-card,
+.profile-card,
+.reservation-card,
+.schedule-card,
+.booking-item,
+.list-item,
+.table-container,
+.modal-content,
+.theme-card {
+  background-color: #ECFEFF !important;
+  border: 1.5px solid #a5e3f0 !important;
+  border-radius: 16px !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+/* REMOVE BORDA APENAS DAS DIVS INTERNAS DE CONTEÚDO */
+.reservation-card > div,
+.booking-item > div,
+.schedule-card > div,
+.historico-card > div,
+[class*="reservation-info"],
+[class*="booking-info"],
+[class*="card-info"],
+[class*="reservation-details"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* QUADRADINHO DO ÍCONE */
+[class*="icon-container"],
+[class*="icon-box"],
+[class*="card-icon"],
+.icon-wrapper {
+  background-color: #ECFEFF !important;
+  border: 1.5px solid #a5e3f0 !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* HOVER EM CARTÕES */
+.action-card:hover,
+.card-atalho:hover,
+.room-card:hover,
+.reservation-card:hover,
+.schedule-card:hover,
+.booking-item:hover {
+  background-color: #ffffff !important;
+  border-color: #1b89a8 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(27, 137, 168, 0.08) !important;
+}
+
+.action-card span,
+.card-atalho span {
+  color: #0d465c !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+}
+
+/* ==============================================================
+   4. ESTILIZAÇÃO DOS CAMPOS DE LOGIN E FILTRO
+   ============================================================== */
+
+/* CONTAINER PAI DO CAMPO DE LOGIN */
+.input-wrapper,
+.input-group,
+.select-container,
+.login-field,
+.login-input-container,
+[class*="login"] form > div,
+[class*="login"] .input-container,
+[class*="login"] .field-container,
+.filter-card div[class*="input"],
+.filter-card div[class*="select"] {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background-color: #ECFEFF !important;
+  border: 1.5px solid #a5e3f0 !important;
+  border-radius: 12px !important;
+  padding: 4px 14px !important;
+  width: 100% !important;
+  height: 48px !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.2s ease-in-out !important;
+  margin-bottom: 12px !important;
+  overflow: hidden !important;
+}
+
+/* DESATIVA BORDA E FUNDO EM DIVS INTERNAS */
+[class*="login"] form > div div,
+[class*="login"] .input-container div,
+.input-wrapper div,
+.input-group div {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* INPUTS TRANSPARENTES */
+.filter-card input,
+.filter-card select,
+.filter-input,
+.filter-select,
+[class*="login"] input {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  color: #084b68 !important;
+  font-size: 15px !important;
+  width: 100% !important;
+  padding: 8px 0 !important;
+}
+
+/* ÍCONES INTERNOS DOS CAMPOS */
+.filter-card svg,
+.filter-card i,
+.filter-card img,
+[class*="login"] svg,
+[class*="login"] i,
+[class*="login"] img,
+[class*="calendar"],
+[class*="arrow"] {
+  position: relative !important;
+  right: auto !important;
+  left: auto !important;
+  color: #1b89a8 !important;
+  fill: #1b89a8 !important;
+  background: transparent !important;
+  border: none !important;
+  flex-shrink: 0 !important;
+  margin-left: 8px !important;
+  pointer-events: none !important;
+}
+
+/* ESTADO AO CLICAR/FOCAR */
+.input-wrapper:focus-within,
+.input-group:focus-within,
+.login-field:focus-within,
+[class*="login"] form > div:focus-within,
+[class*="login"] .input-container:focus-within,
+.filter-card div[class*="input"]:focus-within {
+  border-color: #1b89a8 !important;
+  background-color: #ECFEFF !important;
+}
+
+.filter-card button,
+.main-content button.btn-buscar,
+.main-content button[type="submit"] {
+  background-color: #084b68 !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  padding: 12px 20px !important;
+  width: 100% !important;
+  margin-top: 8px !important;
+}
+
+/* ==============================================================
+   5. RESPONSIVIDADE - TABLET (Entre 769px e 992px)
+   ============================================================== */
+@media (max-width: 992px) and (min-width: 769px) {
+  .dashboard-container .sidebar {
+    width: 80px !important;
+    max-width: 80px !important;
   }
 
-  /* ==============================================================
-    2. ESTRUTURA PRINCIPAL E FUNDO GLOBAL (#ECFEFF)
-    ============================================================== */
+  .dashboard-container .menu-item {
+    font-size: 0 !important;
+    justify-content: center !important;
+    padding: 15px !important;
+  }
+
+  .dashboard-container .menu-icon {
+    margin-right: 0 !important;
+  }
+
+  .dashboard-container .sidebar-footer {
+    display: none !important;
+  }
+}
+
+/* ==============================================================
+   6. RESPONSIVIDADE MOBILE CONSOLIDADA (Até 768px)
+   ============================================================== */
+@media (max-width: 768px) {
+  
+  /* PREVENÇÃO DE OVERFLOW LATERAL E CENTRALIZAÇÃO GLOBAL */
   html, body {
-    margin: 0;
-    padding: 0;
+    overflow-x: hidden !important;
+    width: 100% !important;
     background-color: #ECFEFF !important;
-    width: 100%;
-    height: 100%;
   }
 
   .dashboard-container {
-    display: flex;
-    height: 100vh;
-    width: 100%;
+    flex-direction: column !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
     background-color: #ECFEFF !important;
-    overflow: hidden;
-    box-sizing: border-box;
-    position: absolute;
-    top: 0;
-    left: 0;
   }
 
-  /* SIDEBAR GLOBAL (DESKTOP) */
-  .sidebar {
-    width: 240px;
-    max-width: 240px;
-    background-color: #ECFEFF !important;
-    border-right: 1.5px solid #a5e3f0 !important;
-    display: flex;
-    flex-direction: column;
-    padding-top: 20px;
-    flex-shrink: 0;
-  }
-
-  .sidebar-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 0 16px;
-  }
-
-  .menu-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 18px;
-    border-radius: 12px;
-    color: #688596;
-    font-weight: 500;
-    font-size: 15px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .menu-item:hover {
-    background-color: #dcf7fa;
-    color: #1b89a8;
-  }
-
-  .menu-item.active {
-    background-color: #cbf1f6 !important;
-    color: #1b89a8 !important;
-    font-weight: 700;
-  }
-
-  .menu-icon {
-    margin-right: 14px;
-  }
-
-  /* ÁREA PRINCIPAL E TOPBAR GLOBAL */
   .main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    background-color: #ECFEFF !important;
-  }
-
-  .topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 30px;
-    background-color: #ECFEFF !important;
-    border-bottom: 1.5px solid #a5e3f0 !important;
-    box-sizing: border-box;
-  }
-
-  .search-container {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: #ECFEFF !important;
-    border: 1.5px solid #a5e3f0 !important;
-    border-radius: 12px !important;
-    padding: 6px 14px;
-    height: 42px;
-    box-sizing: border-box;
-    width: 380px;
-  }
-
-  .search-input {
-    border: none;
-    outline: none;
-    background: transparent;
-    width: 100%;
-    font-size: 14px;
-    color: #084b68;
-  }
-
-  .search-input::placeholder {
-    color: #688596;
-  }
-
-  .topbar-actions {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    color: #0d465c;
-  }
-
-  .profile-section {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 700;
-    color: #0d465c;
-    font-size: 14px;
-    cursor: pointer;
-  }
-
-  /* ==============================================================
-    3. REGRA GLOBAL PARA TODOS OS CARTÕES E ITENS DA LISTA (#ECFEFF)
-    ============================================================== */
-  [class*="card"],
-  [class*="reservation"],
-  [class*="schedule"],
-  [class*="item"],
-  .action-card,
-  .card-atalho,
-  .filter-card,
-  .room-card,
-  .info-card,
-  .details-card,
-  .historico-card,
-  .profile-card,
-  .booking-item,
-  .list-item,
-  .table-container,
-  .modal-content,
-  .theme-card {
-    background-color: #ECFEFF !important;
-    border: 1.5px solid #a5e3f0 !important;
-    border-radius: 16px !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding: 0 16px 95px 16px !important;
     box-sizing: border-box !important;
-    transition: all 0.2s ease-in-out !important;
-  }
-
-  /* QUADRADINHOS DOS ÍCONES (CALENDÁRIO DA RESERVA) */
-  [class*="icon-container"],
-  [class*="icon-box"],
-  [class*="card-icon"],
-  .icon-wrapper {
+    margin: 0 auto !important;
     background-color: #ECFEFF !important;
-    border: 1.5px solid #a5e3f0 !important;
-    border-radius: 12px !important;
   }
 
-  /* HOVER EM CARTÕES E LISTAS CLICÁVEIS */
-  .action-card:hover,
-  .card-atalho:hover,
-  .room-card:hover,
-  [class*="reservation"]:hover,
-  [class*="schedule"]:hover,
-  [class*="item"]:hover,
-  [class*="card"]:hover {
-    background-color: #ffffff !important;
-    border-color: #1b89a8 !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 4px 12px rgba(27, 137, 168, 0.08) !important;
+  .dashboard-container .dashboard-content,
+  .dashboard-content {
+    padding: 16px 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* --- AJUSTE DOS CARTÕES ATALHOS / MENSAGENS NO MOBILE --- */
+  .grid-atalhos,
+  .action-cards-grid,
+  .cards-grid,
+  [class*="grid"],
+  [class*="cards-container"] {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .action-card,
+  .card-atalho {
+    padding: 14px 10px !important;
+    min-height: 120px !important;
+    max-height: 135px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    word-break: break-word !important;
   }
 
   .action-card span,
   .card-atalho span {
-    color: #0d465c !important;
-    font-weight: 700 !important;
-    font-size: 16px !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+    font-weight: 600 !important;
+    margin-top: 6px !important;
   }
 
-  /* ==============================================================
-    4. PADRONIZAÇÃO DE INPUTS, SELECTS E CAMPOS
-    ============================================================== */
-  .main-content input:not(.login-input-field),
-  .main-content select,
-  .main-content textarea,
-  .filter-input,
-  .filter-select {
+  .action-card svg,
+  .action-card img,
+  .action-card i,
+  .card-atalho svg,
+  .card-atalho img,
+  .card-atalho i {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 28px !important;
+  }
+
+  /* TOPBAR E PESQUISA EM 2 LINHAS PERFEITAMENTE CENTRALIZADAS */
+  .topbar,
+  .dashboard-container .topbar {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 12px 0 !important;
+    gap: 12px !important;
+    height: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    align-items: center !important;
     background-color: #ECFEFF !important;
-    border: 1.5px solid #a5e3f0 !important;
-    border-radius: 12px !important;
-    color: #084b68 !important;
-    padding: 10px 14px !important;
-    outline: none !important;
+  }
+
+  .topbar-actions {
+    display: flex !important;
+    width: 100% !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 16px !important;
+    order: 1 !important;
+  }
+
+  /* BARRA DE PESQUISA EXPANDIDA NO MOBILE */
+  .search-container,
+  .dashboard-container .search-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 52px !important;
+    order: 2 !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+    background-color: #ECFEFF !important;
+  }
+
+  /* NAVEGAÇÃO INFERIOR MOBILE FIXA (RODAPÉ #ECFEFF) */
+  .sidebar,
+  .dashboard-container .sidebar { 
+    position: fixed !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 75px !important;
+    background-color: #ECFEFF !important;
+    border-top: 1.5px solid #a5e3f0 !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    display: flex !important;
+    flex-direction: row !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    z-index: 99999 !important;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .sidebar-menu,
+  .dashboard-container .sidebar-menu {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    height: 100% !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .menu-item {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    flex: 1 !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+    background-color: transparent !important;
+    font-size: 12px !important;
+  }
+
+  .menu-item.active {
+    background-color: transparent !important;
+    color: #1b89a8 !important;
+  }
+
+  .menu-icon,
+  .menu-item svg,
+  .menu-item i {
+    margin-right: 0 !important;
+    margin-bottom: 2px !important;
+    font-size: 22px !important;
+    width: 22px !important;
+    height: 22px !important;
+  }
+  
+  .menu-item span {
+    display: block !important;
+    font-size: 11px !important;
+    line-height: 1 !important;
+  }
+
+  /* CORREÇÕES DA TELA DE LOGIN */
+  .login-container, .login-page {
+    padding: 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 100vh !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+    background-color: #ECFEFF !important;
+  }
+
+  .top-left-header, .login-image-section {
+    display: none !important;
+  }
+
+  .content-wrapper, .login-form, .login-content {
+    width: 100% !important;
+    max-width: 380px !important;
+    padding: 24px 16px !important;
+    box-sizing: border-box !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .description-text {
     font-size: 14px !important;
-    transition: all 0.2s ease-in-out !important;
+    text-align: center !important;
+    margin-bottom: 24px !important;
+    padding: 0 10px !important;
   }
 
-  .main-content input:focus,
-  .main-content select:focus,
-  .main-content textarea:focus {
-    border-color: #1b89a8 !important;
-    background-color: #ffffff !important;
+  .senai-text {
+    font-size: 24px !important;
+    margin-bottom: 4px !important;
+  }
+  
+  .welcome-text {
+    font-size: 20px !important;
   }
 
-  /* ==============================================================
-    5. RESPONSIVIDADE MOBILE (ATÉ 768px)
-    ============================================================== */
-  @media (max-width: 768px) {
-    .dashboard-container {
-      flex-direction: column !important;
-      background-color: #ECFEFF !important;
-    }
-
-    .main-content {
-      width: 100% !important;
-      padding-bottom: 90px !important;
-      background-color: #ECFEFF !important;
-    }
-
-    .topbar {
-      background-color: #ECFEFF !important;
-    }
-
-    .sidebar { 
-      position: fixed !important;
-      bottom: 0 !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: 70px !important;
-      background-color: #ECFEFF !important;
-      border-top: 1.5px solid #a5e3f0 !important;
-      z-index: 9999 !important;
-    }
+  .login-button, .btn-entrar, button[type="submit"] {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-top: 10px !important;
+    border-radius: 8px !important;
   }
+
+  .login-footer {
+    position: relative !important;
+    bottom: auto !important;
+    margin-top: 40px !important;
+    padding: 20px !important;
+    font-size: 12px !important;
+    text-align: center !important;
+  }
+
+  .bg-shape-top-left, .bg-shape-bottom-right {
+    opacity: 0.3 !important;
+  }
+
+  /* GRELHAS DE DETALHES */
+  .details-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 24px !important;
+    width: 100% !important;
+  }
+
+  .left-column, 
+  .right-column {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
