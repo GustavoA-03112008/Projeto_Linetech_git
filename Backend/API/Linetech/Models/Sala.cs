@@ -1,14 +1,14 @@
 ﻿
-namespace Linetech.Models
-{
-	public class Sala
+	namespace Linetech.Models
 	{
-		public int Id { get; set; }
+		public class Sala
+		{
+			public int Id { get; set; }
 
-		public string Nome { get; set; } = string.Empty;
+			public string Nome { get; set; } = string.Empty;
 
-		public int Capacidade { get; set; }
+			public int Capacidade { get; set; }
 
-		public bool Disponivel { get; set; } = true;
+			public bool Disponivel { get; set; } = true;
+		}
 	}
-}
