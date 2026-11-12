@@ -1,0 +1,16 @@
+# Visual Studio
+.vs/
+**/.vs/
+
+# Arquivos de compilação do .NET
+**/bin/
+**/obj/
+
+# Dependências e arquivos gerados do React
+**/node_modules/
+**/dist/
+
+# Arquivos temporários
+*.user
+*.suo
+*.cache

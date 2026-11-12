@@ -3,6 +3,8 @@ using Linetech.Data;
 using Linetech.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Linetech.Controllers
 {
@@ -25,6 +27,47 @@ namespace Linetech.Controllers
 				.AsNoTracking()
 				.OrderByDescending(r => r.DataInicio)
 				.ToListAsync();
+
+			return Ok(reservas);
+		}
+
+		// Listar próximas reservas do usuário logado
+		[Authorize]
+		[HttpGet("minhas/proximas")]
+		public async Task<IActionResult> ListarMinhasProximasReservas()
+		{
+			var usuarioIdTexto = User.FindFirstValue(
+				ClaimTypes.NameIdentifier
+			);
+
+			if (!int.TryParse(usuarioIdTexto, out int usuarioId))
+			{
+				return Unauthorized("Usuário não identificado.");
+			}
+
+			var agora = DateTime.Now;
+
+			var reservas = await (
+				from reserva in _context.Reservas.AsNoTracking()
+				join sala in _context.Salas.AsNoTracking()
+					on reserva.SalaId equals sala.Id
+				where reserva.UsuarioId == usuarioId
+					&& reserva.DataFim >= agora
+					&& (reserva.Status == "Pendente"
+						|| reserva.Status == "Confirmada")
+				orderby reserva.DataInicio ascending
+				select new
+				{
+					reserva.Id,
+					NomeSala = sala.Nome,
+					reserva.DataInicio,
+					reserva.DataFim,
+					reserva.Finalidade,
+					reserva.Status
+				}
+			)
+			.Take(3)
+			.ToListAsync();
 
 			return Ok(reservas);
 		}
