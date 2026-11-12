@@ -39,6 +39,10 @@ export default function Login() {
         throw new Error('A API não retornou o token de acesso.');
       }
 
+      if (!resposta?.usuario) {
+        throw new Error('A API não retornou os dados do usuário.');
+      }
+
       // Salva o token JWT
       localStorage.setItem('token', resposta.token);
 
