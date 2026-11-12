@@ -18,15 +18,17 @@ export default function Inicio() {
   const [carregandoSalas, setCarregandoSalas] = useState(false);
   const [erroSalas, setErroSalas] = useState('');
 
-  // Filtra as salas pelo nome digitado
-  const salasFiltradas = salas.filter((sala) =>
-    (sala.nome || '')
-      .toLowerCase()
-      .includes(termoBusca.trim().toLowerCase())
-  );
+  // Recupera os dados do usuário
+  function recuperarUsuario() {
+    try {
+      return JSON.parse(localStorage.getItem('usuario') || 'null');
+    } catch (erro) {
+      console.error('Erro ao recuperar usuário:', erro);
+      return null;
+    }
+  }
 
-  // Recupera os dados do usuário que realizou o login
-  const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+  const usuario = recuperarUsuario();
 
   // Identifica o nome do usuário
   const nomeUsuario =
@@ -48,10 +50,16 @@ export default function Inicio() {
         );
 
         setReservas(Array.isArray(dados) ? dados : []);
+
       } catch (erro) {
+        console.error('Erro ao carregar reservas:', erro);
+
+        setReservas([]);
+
         setErroReservas(
           erro.message || 'Não foi possível carregar as reservas.'
         );
+
       } finally {
         setCarregandoReservas(false);
       }
@@ -70,10 +78,16 @@ export default function Inicio() {
         const dados = await apiRequest('/api/Salas');
 
         setSalas(Array.isArray(dados) ? dados : []);
+
       } catch (erro) {
+        console.error('Erro ao carregar salas:', erro);
+
+        setSalas([]);
+
         setErroSalas(
           erro.message || 'Não foi possível carregar as salas.'
         );
+
       } finally {
         setCarregandoSalas(false);
       }
@@ -82,9 +96,22 @@ export default function Inicio() {
     carregarSalas();
   }, []);
 
+  // Filtra as salas pelo nome digitado
+  const salasFiltradas = salas.filter((sala) =>
+    (sala.nome || sala.Nome || '')
+      .toLowerCase()
+      .includes(termoBusca.trim().toLowerCase())
+  );
+
   // Formata a data e o horário da reserva
   function formatarDataHora(data) {
+    if (!data) return 'Data não informada';
+
     const dataReserva = new Date(data);
+
+    if (Number.isNaN(dataReserva.getTime())) {
+      return 'Data inválida';
+    }
 
     return dataReserva.toLocaleString('pt-BR', {
       day: '2-digit',
@@ -101,28 +128,73 @@ export default function Inicio() {
       <aside className="sidebar">
         <div className="sidebar-menu">
 
-          <div className="menu-item active" onClick={() => navigate('/inicio')}>
-            <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/1b89a8/home--v2.png" alt="Início" />
+          <div
+            className="menu-item active"
+            onClick={() => navigate('/inicio')}
+          >
+            <img
+              className="menu-icon"
+              width="22"
+              height="22"
+              src="https://img.icons8.com/material-outlined/24/1b89a8/home--v2.png"
+              alt="Início"
+            />
             Início
           </div>
 
-          <div className="menu-item" onClick={() => navigate('/historico')}>
-            <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/688596/calendar--v1.png" alt="Reservas" />
+          <div
+            className="menu-item"
+            onClick={() => navigate('/historico')}
+          >
+            <img
+              className="menu-icon"
+              width="22"
+              height="22"
+              src="https://img.icons8.com/material-outlined/24/688596/calendar--v1.png"
+              alt="Reservas"
+            />
             Reservas
           </div>
 
-          <div className="menu-item" onClick={() => navigate('/consultar')}>
-            <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/688596/door.png" alt="Salas" />
+          <div
+            className="menu-item"
+            onClick={() => navigate('/consultar')}
+          >
+            <img
+              className="menu-icon"
+              width="22"
+              height="22"
+              src="https://img.icons8.com/material-outlined/24/688596/door.png"
+              alt="Salas"
+            />
             Salas
           </div>
 
-          <div className="menu-item" onClick={() => navigate('/solicitacoes')}>
-            <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/688596/document--v1.png" alt="Solicitações" />
+          <div
+            className="menu-item"
+            onClick={() => navigate('/solicitacoes')}
+          >
+            <img
+              className="menu-icon"
+              width="22"
+              height="22"
+              src="https://img.icons8.com/material-outlined/24/688596/document--v1.png"
+              alt="Solicitações"
+            />
             Solicitações
           </div>
 
-          <div className="menu-item" onClick={() => navigate('/perfil')}>
-            <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/688596/user--v1.png" alt="Perfil" />
+          <div
+            className="menu-item"
+            onClick={() => navigate('/perfil')}
+          >
+            <img
+              className="menu-icon"
+              width="22"
+              height="22"
+              src="https://img.icons8.com/material-outlined/24/688596/user--v1.png"
+              alt="Perfil"
+            />
             Perfil
           </div>
 
@@ -136,7 +208,12 @@ export default function Inicio() {
         <header className="topbar">
 
           <div className="search-container">
-            <img width="20" height="20" src="https://img.icons8.com/material-outlined/24/1b89a8/search--v1.png" alt="Buscar" />
+            <img
+              width="20"
+              height="20"
+              src="https://img.icons8.com/material-outlined/24/1b89a8/search--v1.png"
+              alt="Buscar"
+            />
 
             <input
               type="text"
@@ -149,13 +226,35 @@ export default function Inicio() {
 
           <div className="topbar-actions">
 
-            <div className="notification-icon" onClick={() => navigate('/notificacoes')}>
-            <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/appointment-reminders.png" alt="Notificações" />
+            <div
+              className="notification-icon"
+              onClick={() => navigate('/notificacoes')}
+            >
+              <img
+                width="22"
+                height="22"
+                style={{ cursor: 'pointer' }}
+                src="https://img.icons8.com/material-outlined/24/1b89a8/appointment-reminders.png"
+                alt="Notificações"
+              />
             </div>
-            <div className="profile-section" onClick={() => navigate('/perfil')}>
-              <img width="28" height="28" src="https://img.icons8.com/material-rounded/28/1b89a8/user-male-circle.png" alt="Usuário" />
+
+            <div
+              className="profile-section"
+              onClick={() => navigate('/perfil')}
+            >
+              <img
+                width="28"
+                height="28"
+                src="https://img.icons8.com/material-rounded/28/1b89a8/user-male-circle.png"
+                alt="Usuário"
+              />
+
               {nomeUsuario}
-              <span style={{ fontSize: '9px', marginLeft: '3px' }}>▼</span>
+
+              <span style={{ fontSize: '9px', marginLeft: '3px' }}>
+                ▼
+              </span>
             </div>
 
           </div>
@@ -164,6 +263,7 @@ export default function Inicio() {
         {/* RESULTADOS DA PESQUISA */}
         {termoBusca.trim() !== '' && (
           <div className="resultados-pesquisa">
+
             <h3>Salas encontradas</h3>
 
             {carregandoSalas && (
@@ -183,16 +283,24 @@ export default function Inicio() {
             {!carregandoSalas &&
               !erroSalas &&
               salasFiltradas.map((sala) => (
-                <div className="resultado-sala" key={sala.id}>
-                  <strong>{sala.nome}</strong>
-                  <p>Capacidade: {sala.capacidade} pessoa(s)</p>
+                <div
+                  className="resultado-sala"
+                  key={sala.id ?? sala.Id}
+                >
+                  <strong>{sala.nome || sala.Nome}</strong>
+
                   <p>
-                    {sala.disponivel
+                    Capacidade: {sala.capacidade ?? sala.Capacidade} pessoa(s)
+                  </p>
+
+                  <p>
+                    {(sala.disponivel ?? sala.Disponivel)
                       ? 'Disponível'
                       : 'Indisponível'}
                   </p>
                 </div>
               ))}
+
           </div>
         )}
 
@@ -210,23 +318,55 @@ export default function Inicio() {
           {/* GRELHA DE AÇÕES */}
           <div className="action-grid">
 
-            <div className="action-card" onClick={() => navigate('/gestao')}>
-              <img width="36" height="36" src="https://img.icons8.com/material-outlined/48/1b89a8/calendar--v1.png" alt="Reservar sala" />
+            <div
+              className="action-card"
+              onClick={() => navigate('/gestao')}
+            >
+              <img
+                width="36"
+                height="36"
+                src="https://img.icons8.com/material-outlined/48/1b89a8/calendar--v1.png"
+                alt="Reservar sala"
+              />
               <h3>Gestão de Sala</h3>
             </div>
 
-            <div className="action-card" onClick={() => navigate('/consultar')}>
-              <img width="36" height="36" src="https://img.icons8.com/material-outlined/48/1b89a8/search--v1.png" alt="Consultar disponibilidade" />
+            <div
+              className="action-card"
+              onClick={() => navigate('/consultar')}
+            >
+              <img
+                width="36"
+                height="36"
+                src="https://img.icons8.com/material-outlined/48/1b89a8/search--v1.png"
+                alt="Consultar disponibilidade"
+              />
               <h3>Consultar disponibilidade</h3>
             </div>
 
-            <div className="action-card" onClick={() => navigate('/historico')}>
-              <img width="36" height="36" src="https://img.icons8.com/material-outlined/48/1b89a8/paste.png" alt="Gestão de salas" />
+            <div
+              className="action-card"
+              onClick={() => navigate('/historico')}
+            >
+              <img
+                width="36"
+                height="36"
+                src="https://img.icons8.com/material-outlined/48/1b89a8/paste.png"
+                alt="Gestão de salas"
+              />
               <h3>Histórico de Reservas</h3>
             </div>
 
-            <div className="action-card" onClick={() => navigate('/solicitacoes')}>
-              <img width="36" height="36" src="https://img.icons8.com/material-outlined/48/1b89a8/user-group-man-man.png" alt="Solicitar acesso" />
+            <div
+              className="action-card"
+              onClick={() => navigate('/solicitacoes')}
+            >
+              <img
+                width="36"
+                height="36"
+                src="https://img.icons8.com/material-outlined/48/1b89a8/user-group-man-man.png"
+                alt="Solicitar acesso"
+              />
               <h3>Solicitar acesso</h3>
             </div>
 
@@ -268,7 +408,7 @@ export default function Inicio() {
               reservas.map((reserva) => (
                 <div
                   className="reserva-item"
-                  key={reserva.id}
+                  key={reserva.id ?? reserva.Id}
                   onClick={() => navigate('/visualizar')}
                   style={{ cursor: 'pointer' }}
                 >
@@ -286,20 +426,33 @@ export default function Inicio() {
 
                     <div className="reserva-text">
 
-                      <h4>{reserva.nomeSala}</h4>
+                      <h4>
+                        {reserva.nomeSala || reserva.NomeSala || 'Sala'}
+                      </h4>
 
                       <p>
-                        {formatarDataHora(reserva.dataInicio)}
-                        {' - '}
-                        {new Date(reserva.dataFim).toLocaleTimeString(
-                          'pt-BR',
-                          {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          }
+                        {formatarDataHora(
+                          reserva.dataInicio ?? reserva.DataInicio
                         )}
+
+                        {' - '}
+
+                        {(() => {
+                          const dataFim = new Date(
+                            reserva.dataFim ?? reserva.DataFim
+                          );
+
+                          return Number.isNaN(dataFim.getTime())
+                            ? 'Horário não informado'
+                            : dataFim.toLocaleTimeString('pt-BR', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              });
+                        })()}
+
                         <br />
-                        {reserva.finalidade}
+
+                        {reserva.finalidade || reserva.Finalidade || ''}
                       </p>
 
                     </div>
