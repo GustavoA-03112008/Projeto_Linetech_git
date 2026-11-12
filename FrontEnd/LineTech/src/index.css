@@ -2,20 +2,34 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* ==============================================================
-   1. FORÇAR FONTE E BOX-SIZING EM TODO O SISTEMA
+   1. CONFIGURAÇÕES GERAIS
    ============================================================== */
-*, 
-*::before, 
-*::after, 
-input, 
-button, 
-select, 
+
+*,
+*::before,
+*::after,
+input,
+button,
+select,
 textarea {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif !important;
   box-sizing: border-box;
 }
 
-/* RESET DOS INPUTS */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ECFEFF !important;
+}
+
+/* ==============================================================
+   2. INPUTS
+   ============================================================== */
+
 input,
 input[type="text"],
 input[type="password"] {
@@ -25,25 +39,17 @@ input[type="password"] {
   box-shadow: none !important;
 }
 
-/* Evita que o preenchimento automático do navegador force fundo branco */
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px #ECFEFF inset !important;
   -webkit-text-fill-color: #084b68 !important;
 }
 
 /* ==============================================================
-   2. ESTRUTURA PRINCIPAL E FUNDO GLOBAL (#ECFEFF)
+   3. ESTRUTURA PRINCIPAL
    ============================================================== */
-html, body {
-  margin: 0;
-  padding: 0;
-  background-color: #ECFEFF !important;
-  width: 100%;
-  height: 100%;
-}
 
 .dashboard-container {
   display: flex;
@@ -57,7 +63,10 @@ html, body {
   left: 0;
 }
 
-/* SIDEBAR GLOBAL (DESKTOP) */
+/* ==============================================================
+   4. SIDEBAR
+   ============================================================== */
+
 .sidebar {
   width: 240px;
   max-width: 240px;
@@ -103,7 +112,10 @@ html, body {
   margin-right: 14px;
 }
 
-/* ÁREA PRINCIPAL E TOPBAR GLOBAL */
+/* ==============================================================
+   5. ÁREA PRINCIPAL
+   ============================================================== */
+
 .main-content {
   flex: 1;
   display: flex;
@@ -111,6 +123,10 @@ html, body {
   overflow-y: auto;
   background-color: #ECFEFF !important;
 }
+
+/* ==============================================================
+   6. TOPBAR
+   ============================================================== */
 
 .topbar {
   display: flex;
@@ -120,43 +136,6 @@ html, body {
   background-color: #ECFEFF !important;
   border-bottom: 1.5px solid #a5e3f0 !important;
   box-sizing: border-box;
-}
-
-/* BARRA DE PESQUISA EXPANDIDA (DESKTOP) */
-.search-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background-color: #ECFEFF !important;
-  border: 1.5px solid #a5e3f0 !important;
-  border-radius: 14px !important;
-  padding: 10px 18px;
-  height: 56px !important;
-  box-sizing: border-box;
-  width: 500px !important;
-}
-
-.search-input {
-  border: none !important;
-  outline: none !important;
-  background: transparent !important;
-  width: 100%;
-  font-size: 16px !important;
-  color: #084b68;
-}
-
-.search-input::placeholder {
-  color: #688596;
-}
-
-.search-container img,
-.search-container svg,
-.search-container i {
-  width: 22px !important;
-  height: 22px !important;
-  font-size: 22px !important;
-  color: #1b89a8 !important;
-  flex-shrink: 0;
 }
 
 .topbar-actions {
@@ -177,8 +156,55 @@ html, body {
 }
 
 /* ==============================================================
-   3. CARTÕES E CONTAINERS (#ECFEFF)
+   7. BARRA DE PESQUISA (EXPANDIDA NO DESKTOP)
    ============================================================== */
+
+.search-container,
+div[class*="search"],
+form[class*="search"] {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background-color: #ECFEFF !important;
+  border: 1.5px solid #a5e3f0 !important;
+  border-radius: 14px !important;
+  padding: 10px 18px !important;
+  height: 56px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 890px !important; /* Expandida de 500px para 800px */
+}
+
+.search-input,
+.search-container input,
+div[class*="search"] input {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  width: 100% !important;
+  font-size: 16px !important;
+  color: #084b68 !important;
+}
+
+.search-input::placeholder {
+  color: #688596 !important;
+}
+
+.search-container img,
+.search-container svg,
+.search-container i,
+div[class*="search"] svg {
+  width: 22px !important;
+  height: 22px !important;
+  font-size: 22px !important;
+  color: #1b89a8 !important;
+  flex-shrink: 0 !important;
+}
+
+/* ==============================================================
+   8. CARDS
+   ============================================================== */
+
 .action-card,
 .card-atalho,
 .filter-card,
@@ -201,45 +227,99 @@ html, body {
   transition: all 0.2s ease-in-out !important;
 }
 
-/* REMOVE BORDA APENAS DAS DIVS INTERNAS DE CONTEÚDO */
-.reservation-card > div,
-.booking-item > div,
-.schedule-card > div,
-.historico-card > div,
-[class*="reservation-info"],
-[class*="booking-info"],
-[class*="card-info"],
-[class*="reservation-details"] {
-  background: transparent !important;
-  border: none !important;
+/* ==============================================================
+   9. CARDS DE PRÓXIMAS RESERVAS
+   ============================================================== */
+
+.reservation-card,
+.booking-item,
+.reservation-item,
+.schedule-card,
+[class*="reservation-card"],
+[class*="reservation-item"],
+[class*="booking-item"],
+[class*="reserva-card"],
+[class*="reserva-item"] {
+  background-color: #ECFEFF !important;
+  border: 1.5px solid #a5e3f0 !important;
   box-shadow: none !important;
 }
 
-/* QUADRADINHO DO ÍCONE */
-[class*="icon-container"],
-[class*="icon-box"],
-[class*="card-icon"],
-.icon-wrapper {
+.reservation-card > div,
+.booking-item > div,
+.reservation-item > div,
+.schedule-card > div,
+.reservation-card > section,
+.booking-item > section,
+.reservation-item > section,
+.schedule-card > section {
+  background-color: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.reservation-card [class*="info"],
+.reservation-card [class*="content"],
+.reservation-card [class*="details"],
+.reservation-card [class*="data"],
+.booking-item [class*="info"],
+.booking-item [class*="content"],
+.booking-item [class*="details"],
+.booking-item [class*="data"],
+.reservation-item [class*="info"],
+.reservation-item [class*="content"],
+.reservation-item [class*="details"],
+.schedule-card [class*="info"],
+.schedule-card [class*="content"],
+.schedule-card [class*="details"] {
+  background-color: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* ==============================================================
+   10. ÍCONE DO CALENDÁRIO
+   ============================================================== */
+
+.reservation-card [class*="icon"],
+.booking-item [class*="icon"],
+.reservation-item [class*="icon"],
+.schedule-card [class*="icon"],
+[class*="reservation"] [class*="calendar"] {
   background-color: #ECFEFF !important;
   border: 1.5px solid #a5e3f0 !important;
   border-radius: 12px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
 }
 
-/* HOVER EM CARTÕES */
+/* ==============================================================
+   11. HOVER DOS CARDS
+   ============================================================== */
+
 .action-card:hover,
 .card-atalho:hover,
 .room-card:hover,
 .reservation-card:hover,
 .schedule-card:hover,
 .booking-item:hover {
-  background-color: #ffffff !important;
+  background-color: #ECFEFF !important;
   border-color: #1b89a8 !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 4px 12px rgba(27, 137, 168, 0.08) !important;
 }
+
+.reservation-card:hover > div,
+.booking-item:hover > div,
+.reservation-item:hover > div,
+.schedule-card:hover > div {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+/* ==============================================================
+   12. TEXTOS DOS CARDS
+   ============================================================== */
 
 .action-card span,
 .card-atalho span {
@@ -249,10 +329,9 @@ html, body {
 }
 
 /* ==============================================================
-   4. ESTILIZAÇÃO DOS CAMPOS DE LOGIN E FILTRO
+   13. CAMPOS DE LOGIN E FILTROS
    ============================================================== */
 
-/* CONTAINER PAI DO CAMPO DE LOGIN */
 .input-wrapper,
 .input-group,
 .select-container,
@@ -279,7 +358,10 @@ html, body {
   overflow: hidden !important;
 }
 
-/* DESATIVA BORDA E FUNDO EM DIVS INTERNAS */
+/* ==============================================================
+   14. DIVS INTERNAS DOS CAMPOS
+   ============================================================== */
+
 [class*="login"] form > div div,
 [class*="login"] .input-container div,
 .input-wrapper div,
@@ -291,7 +373,10 @@ html, body {
   margin: 0 !important;
 }
 
-/* INPUTS TRANSPARENTES */
+/* ==============================================================
+   15. INPUTS
+   ============================================================== */
+
 .filter-card input,
 .filter-card select,
 .filter-input,
@@ -307,7 +392,10 @@ html, body {
   padding: 8px 0 !important;
 }
 
-/* ÍCONES INTERNOS DOS CAMPOS */
+/* ==============================================================
+   16. ÍCONES DOS CAMPOS
+   ============================================================== */
+
 .filter-card svg,
 .filter-card i,
 .filter-card img,
@@ -328,7 +416,10 @@ html, body {
   pointer-events: none !important;
 }
 
-/* ESTADO AO CLICAR/FOCAR */
+/* ==============================================================
+   17. FOCO DOS CAMPOS
+   ============================================================== */
+
 .input-wrapper:focus-within,
 .input-group:focus-within,
 .login-field:focus-within,
@@ -338,6 +429,10 @@ html, body {
   border-color: #1b89a8 !important;
   background-color: #ECFEFF !important;
 }
+
+/* ==============================================================
+   18. BOTÕES
+   ============================================================== */
 
 .filter-card button,
 .main-content button.btn-buscar,
@@ -354,9 +449,11 @@ html, body {
 }
 
 /* ==============================================================
-   5. RESPONSIVIDADE - TABLET (Entre 769px e 992px)
+   19. TABLET
    ============================================================== */
+
 @media (max-width: 992px) and (min-width: 769px) {
+
   .dashboard-container .sidebar {
     width: 80px !important;
     max-width: 80px !important;
@@ -378,12 +475,13 @@ html, body {
 }
 
 /* ==============================================================
-   6. RESPONSIVIDADE MOBILE CONSOLIDADA (Até 768px)
+   20. MOBILE
    ============================================================== */
+
 @media (max-width: 768px) {
-  
-  /* PREVENÇÃO DE OVERFLOW LATERAL E CENTRALIZAÇÃO GLOBAL */
-  html, body {
+
+  html,
+  body {
     overflow-x: hidden !important;
     width: 100% !important;
     background-color: #ECFEFF !important;
@@ -413,7 +511,8 @@ html, body {
     box-sizing: border-box !important;
   }
 
-  /* --- AJUSTE DOS CARTÕES ATALHOS / MENSAGENS NO MOBILE --- */
+  /* GRID DOS CARDS */
+
   .grid-atalhos,
   .action-cards-grid,
   .cards-grid,
@@ -437,6 +536,7 @@ html, body {
     justify-content: center !important;
     text-align: center !important;
     word-break: break-word !important;
+    background-color: #ECFEFF !important;
   }
 
   .action-card span,
@@ -458,7 +558,8 @@ html, body {
     font-size: 28px !important;
   }
 
-  /* TOPBAR E PESQUISA EM 2 LINHAS PERFEITAMENTE CENTRALIZADAS */
+  /* TOPBAR MOBILE */
+
   .topbar,
   .dashboard-container .topbar {
     display: flex !important;
@@ -482,9 +583,11 @@ html, body {
     order: 1 !important;
   }
 
-  /* BARRA DE PESQUISA EXPANDIDA NO MOBILE */
+  /* PESQUISA MOBILE */
+
   .search-container,
-  .dashboard-container .search-container {
+  .dashboard-container .search-container,
+  div[class*="search"] {
     width: 100% !important;
     max-width: 100% !important;
     height: 52px !important;
@@ -494,9 +597,10 @@ html, body {
     background-color: #ECFEFF !important;
   }
 
-  /* NAVEGAÇÃO INFERIOR MOBILE FIXA (RODAPÉ #ECFEFF) */
+  /* NAVEGAÇÃO INFERIOR */
+
   .sidebar,
-  .dashboard-container .sidebar { 
+  .dashboard-container .sidebar {
     position: fixed !important;
     top: auto !important;
     bottom: 0 !important;
@@ -556,15 +660,17 @@ html, body {
     width: 22px !important;
     height: 22px !important;
   }
-  
+
   .menu-item span {
     display: block !important;
     font-size: 11px !important;
     line-height: 1 !important;
   }
 
-  /* CORREÇÕES DA TELA DE LOGIN */
-  .login-container, .login-page {
+  /* LOGIN MOBILE */
+
+  .login-container,
+  .login-page {
     padding: 16px !important;
     display: flex !important;
     flex-direction: column !important;
@@ -576,11 +682,14 @@ html, body {
     background-color: #ECFEFF !important;
   }
 
-  .top-left-header, .login-image-section {
+  .top-left-header,
+  .login-image-section {
     display: none !important;
   }
 
-  .content-wrapper, .login-form, .login-content {
+  .content-wrapper,
+  .login-form,
+  .login-content {
     width: 100% !important;
     max-width: 380px !important;
     padding: 24px 16px !important;
@@ -602,12 +711,14 @@ html, body {
     font-size: 24px !important;
     margin-bottom: 4px !important;
   }
-  
+
   .welcome-text {
     font-size: 20px !important;
   }
 
-  .login-button, .btn-entrar, button[type="submit"] {
+  .login-button,
+  .btn-entrar,
+  button[type="submit"] {
     width: 100% !important;
     box-sizing: border-box !important;
     margin-top: 10px !important;
@@ -623,11 +734,13 @@ html, body {
     text-align: center !important;
   }
 
-  .bg-shape-top-left, .bg-shape-bottom-right {
+  .bg-shape-top-left,
+  .bg-shape-bottom-right {
     opacity: 0.3 !important;
   }
 
-  /* GRELHAS DE DETALHES */
+  /* DETALHES MOBILE */
+
   .details-grid {
     display: flex !important;
     flex-direction: column !important;
@@ -635,11 +748,93 @@ html, body {
     width: 100% !important;
   }
 
-  .left-column, 
+  .left-column,
   .right-column {
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
     box-sizing: border-box !important;
   }
+
+  /* PRÓXIMAS RESERVAS NO MOBILE */
+
+  .reservation-card,
+  .booking-item,
+  .reservation-item,
+  .schedule-card {
+    background-color: #ECFEFF !important;
+  }
+
+  .reservation-card > div,
+  .booking-item > div,
+  .reservation-item > div,
+  .schedule-card > div {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* ==============================================================
+   21. REGRA FINAL DAS PRÓXIMAS RESERVAS
+   ============================================================== */
+
+/* Remove bordas internas de qualquer elemento ou div filha */
+.reservation-card *,
+.booking-item *,
+.reservation-item *,
+.schedule-card *,
+[class*="reservation-card"] *,
+[class*="reservation-item"] *,
+[class*="booking-item"] *,
+[class*="reserva-card"] *,
+[class*="reserva-item"] * {
+  background-color: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Reinstaura APENAS a borda do quadradinho do ícone do calendário */
+.reservation-card [class*="icon"],
+.booking-item [class*="icon"],
+.reservation-item [class*="icon"],
+.schedule-card [class*="icon"],
+[class*="reservation"] [class*="calendar"],
+[class*="reservation-card"] img,
+[class*="reservation-card"] svg {
+  background-color: #ECFEFF !important;
+  border: 1.5px solid #a5e3f0 !important;
+  border-radius: 12px !important;
+}
+
+/* Mantém somente a borda do quadrado do calendário */
+
+.reservation-card [class*="icon"],
+.booking-item [class*="icon"],
+.reservation-item [class*="icon"],
+.schedule-card [class*="icon"],
+[class*="reservation"] [class*="calendar"] {
+  background-color: #ECFEFF !important;
+  border: 1.5px solid #a5e3f0 !important;
+  border-radius: 12px !important;
+}
+
+/* Hover */
+
+.reservation-card:hover,
+.booking-item:hover,
+.reservation-item:hover,
+.schedule-card:hover {
+  background-color: #ECFEFF !important;
+  border-color: #1b89a8 !important;
+}
+
+.reservation-card:hover > div,
+.booking-item:hover > div,
+.reservation-item:hover > div,
+.schedule-card:hover > div {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
