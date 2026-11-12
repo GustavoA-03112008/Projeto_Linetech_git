@@ -143,6 +143,22 @@ export default function SolicitarAcesso() {
         }
     }
 
+    // Excluir somente da lista exibida
+    function handleExcluir(reserva) {
+        const confirmar = window.confirm(
+            'Tem certeza de que deseja remover esta solicitação da lista?'
+        );
+
+        if (!confirmar) return;
+
+        setReservas(prev =>
+            prev.filter(item => item.id !== reserva.id)
+        );
+
+        setMensagem('Solicitação removida da lista com sucesso!');
+        setErro('');
+    }
+
     // Filtrar reservas de acordo com a aba selecionada
     const reservasFiltradas = reservas.filter(reserva => {
         const status = (reserva.status || '').toLowerCase();
@@ -497,32 +513,47 @@ export default function SolicitarAcesso() {
 
                                     </div>
 
-                                    {/* AÇÕES DAS SOLICITAÇÕES PENDENTES */}
-                                    {activeTab === 'pendentes' && (
-                                        <div className="card-action-buttons">
+                                    {/* AÇÕES DAS SOLICITAÇÕES */}
+                                    <div className="card-action-buttons">
 
-                                            <button
-                                                className="btn-aprovar"
-                                                type="button"
-                                                disabled={processando !== null}
-                                                onClick={() => handleAprovar(reserva)}
-                                            >
-                                                <span>✓</span>
-                                                {estaProcessando ? 'Aprovando...' : 'Aprovar'}
-                                            </button>
+                                        {/* APROVAR E RECUSAR SOMENTE EM PENDENTES */}
+                                        {activeTab === 'pendentes' && (
+                                            <>
+                                                <button
+                                                    className="btn-aprovar"
+                                                    type="button"
+                                                    disabled={processando !== null}
+                                                    onClick={() => handleAprovar(reserva)}
+                                                >
+                                                    <span>✓</span>
+                                                    {estaProcessando ? 'Aprovando...' : 'Aprovar'}
+                                                </button>
 
-                                            <button
-                                                className="btn-recusar"
-                                                type="button"
-                                                disabled={processando !== null}
-                                                onClick={() => handleRecusar(reserva)}
-                                            >
-                                                <span>✕</span>
-                                                {estaProcessando ? 'Recusando...' : 'Recusar'}
-                                            </button>
+                                                <button
+                                                    className="btn-recusar"
+                                                    type="button"
+                                                    disabled={processando !== null}
+                                                    onClick={() => handleRecusar(reserva)}
+                                                >
+                                                    <span>✕</span>
+                                                    {estaProcessando ? 'Recusando...' : 'Recusar'}
+                                                </button>
+                                            </>
+                                        )}
 
-                                        </div>
-                                    )}
+                                        {/* X PARA EXCLUIR NAS TRÊS ABAS */}
+                                        <button
+                                            className="btn-excluir"
+                                            type="button"
+                                            disabled={processando !== null}
+                                            onClick={() => handleExcluir(reserva)}
+                                            title="Excluir solicitação"
+                                            aria-label="Excluir solicitação"
+                                        >
+                                            X
+                                        </button>
+
+                                    </div>
 
                                 </div>
                             );

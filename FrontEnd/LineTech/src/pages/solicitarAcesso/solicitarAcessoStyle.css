@@ -1,3 +1,4 @@
+
 /* src/pages/solicitarAcesso/solicitarAcessoStyle.css */
 
 .solicitar-acesso-page.dashboard-container {
@@ -271,6 +272,33 @@
   background-color: #edf8fa;
 }
 
+/* Botão X para excluir solicitação */
+.solicitar-acesso-page .btn-excluir {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  background: transparent;
+  color: #1b89a8;
+  border: none;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.solicitar-acesso-page .btn-excluir:hover {
+  color: #0a4f68;
+}
+
+.solicitar-acesso-page .btn-excluir:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Botão Entrar e Footer */
 .solicitar-acesso-page .btn-entrar-footer {
   width: 100%;
@@ -313,6 +341,7 @@
     grid-template-columns: 1fr;
     gap: 10px;
   }
+
   .solicitar-acesso-page .card-action-buttons {
     flex-direction: column;
     gap: 10px;
