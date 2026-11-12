@@ -7,7 +7,7 @@ export default function SalaLiberada() {
 
   return (
     <div className="sala-liberada-page dashboard-container">
-      
+
       {/* BARRA LATERAL (SIDEBAR) */}
       <aside className="sidebar">
         <div className="sidebar-menu">
@@ -36,17 +36,19 @@ export default function SalaLiberada() {
 
       {/* ÁREA PRINCIPAL */}
       <main className="main-content">
-        
+
         {/* BARRA SUPERIOR (TOPBAR) */}
         <header className="topbar">
           <div className="search-container">
             <img width="20" height="20" src="https://img.icons8.com/material-outlined/24/1b89a8/search--v1.png" alt="Buscar" />
             <input type="text" className="search-input" placeholder="Buscar salas, atividades..." />
           </div>
-          
+
           <div className="topbar-actions">
-            <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/appointment-reminders.png" alt="Notificações" />
-            <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/mail.png" alt="Mensagens" />
+            <div className="notification-icon" onClick={() => navigate('/notificacoes')}>
+              <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/appointment-reminders.png" alt="Notificações" />
+            </div>
+
             <div className="profile-section" onClick={() => navigate('/perfil')}>
               <img width="28" height="28" src="https://img.icons8.com/material-rounded/28/1b89a8/user-male-circle.png" alt="Usuário" />
               Prof. Carlos <span style={{ fontSize: '9px', marginLeft: '3px' }}>▼</span>
@@ -58,20 +60,20 @@ export default function SalaLiberada() {
         <div className="dashboard-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minHeight: 'calc(100vh - 120px)' }}>
 
           {/* BOTÃO VOLTAR NO CANTO SUPERIOR ESQUERDO */}
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '12px', 
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
             marginBottom: '20px',
             width: '100%'
           }}>
-            <img 
-              width="24" 
-              height="24" 
-              src="https://img.icons8.com/material-outlined/24/1b89a8/back--v1.png" 
-              alt="Voltar" 
+            <img
+              width="24"
+              height="24"
+              src="https://img.icons8.com/material-outlined/24/1b89a8/back--v1.png"
+              alt="Voltar"
               style={{ cursor: 'pointer' }}
-              onClick={() => navigate(-1)} 
+              onClick={() => navigate(-1)}
             />
             <h1 className="page-title" style={{ margin: 0 }}>Liberação de Sala</h1>
           </div>
@@ -87,19 +89,19 @@ export default function SalaLiberada() {
             flex: 1
           }}>
             <div className="success-container" style={{ maxWidth: '450px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              
+
               {/* ÍCONE DE SUCESSO */}
               <div className="check-circle" style={{ marginBottom: '16px' }}>
                 <img src="https://img.icons8.com/material-outlined/48/00a8cc/checkmark.png" alt="Sucesso" />
               </div>
 
               <h1 className="success-title">Sala liberada</h1>
-              
+
               <p className="success-message">
                 A reserva foi encerrada e a sala já está disponível para novas reservas.
               </p>
 
-              <button 
+              <button
                 className="btn-ver-disponibilidades"
                 style={{ width: '100%', marginTop: '20px' }}
                 onClick={() => navigate('/consultar')}

@@ -49,7 +49,7 @@ export default function HistoricoReserva() {
 
   return (
     <div className="historico-reserva-page dashboard-container">
-      
+
       {/* BARRA LATERAL (SIDEBAR) */}
       <aside className="sidebar">
         <div className="sidebar-menu">
@@ -78,17 +78,18 @@ export default function HistoricoReserva() {
 
       {/* ÁREA PRINCIPAL */}
       <main className="main-content">
-        
+
         {/* BARRA SUPERIOR (TOPBAR) */}
         <header className="topbar">
           <div className="search-container">
             <img width="20" height="20" src="https://img.icons8.com/material-outlined/24/1b89a8/search--v1.png" alt="Buscar" />
             <input type="text" className="search-input" placeholder="Buscar salas, atividades..." />
           </div>
-          
+
           <div className="topbar-actions">
-            <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/appointment-reminders.png" alt="Notificações" />
-            <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/mail.png" alt="Mensagens" />
+            <div className="notification-icon" onClick={() => navigate('/notificacoes')}>
+              <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/appointment-reminders.png" alt="Notificações" />
+            </div>
             <div className="profile-section" onClick={() => navigate('/perfil')}>
               <img width="28" height="28" src="https://img.icons8.com/material-rounded/28/1b89a8/user-male-circle.png" alt="Usuário" />
               Prof. Carlos <span style={{ fontSize: '9px', marginLeft: '3px' }}>▼</span>
@@ -98,16 +99,16 @@ export default function HistoricoReserva() {
 
         {/* CONTEÚDO DA PÁGINA */}
         <div className="dashboard-content">
-          
+
           {/* TÍTULO COM BOTÃO VOLTAR */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-            <img 
-              width="24" 
-              height="24" 
-              src="https://img.icons8.com/material-outlined/24/1b89a8/back--v1.png" 
-              alt="Voltar" 
+            <img
+              width="24"
+              height="24"
+              src="https://img.icons8.com/material-outlined/24/1b89a8/back--v1.png"
+              alt="Voltar"
               style={{ cursor: 'pointer' }}
-              onClick={() => navigate(-1)} 
+              onClick={() => navigate(-1)}
             />
             <h1 className="page-title" style={{ margin: 0 }}>Histórico das reservas</h1>
           </div>
@@ -129,8 +130,8 @@ export default function HistoricoReserva() {
           {/* LISTA DE RESERVAS */}
           <div className="reservas-list">
             {listaFiltrada.map((item) => (
-              <div 
-                className="reserva-card-item" 
+              <div
+                className="reserva-card-item"
                 key={item.id}
                 onClick={() => navigate('/detalhes')}
               >

@@ -1,0 +1,226 @@
+/* Importação da fonte Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ==============================================================
+   1. CONFIGURAÇÕES GERAIS E CENTRALIZAÇÃO TOTAL
+   ============================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ECFEFF !important;
+  overflow-x: hidden;
+}
+
+.cadastro-container {
+  min-height: 100vh;
+  width: 100vw;
+  background-color: #ECFEFF !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* CARTÃO EMPILHADO (VERTICAL) CENTRALIZADO */
+.cadastro-card {
+  width: 100%;
+  max-width: 460px; /* Largura ideal para formulário único */
+  background-color: #ECFEFF !important;
+  border: 1.5px solid #a5e3f0 !important;
+  border-radius: 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  padding: 40px 30px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 24px rgba(27, 137, 168, 0.06);
+}
+
+/* ==============================================================
+   2. IDENTIDADE VISUAL (TOPO)
+   ============================================================== */
+
+.cadastro-apresentacao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 28px; /* Espaçamento entre o topo e o formulário */
+  width: 100%;
+}
+
+.cadastro-logo {
+  width: 110px;
+  height: auto;
+  max-height: 75px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.cadastro-apresentacao h1 {
+  font-size: 32px;
+  color: #071A2B;
+  margin: 0;
+  font-weight: 800;
+}
+
+.cadastro-apresentacao h2 {
+  font-size: 20px;
+  color: #071A2B;
+  margin: 2px 0 6px 0;
+  font-weight: 700;
+}
+
+.cadastro-apresentacao p {
+  font-size: 14px;
+  color: #56899F;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ==============================================================
+   3. FORMULÁRIO (ABAIXO)
+   ============================================================== */
+
+.cadastro-form-area {
+  width: 100%;
+}
+
+.cadastro-titulo {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.cadastro-titulo h2 {
+  font-size: 24px;
+  color: #071A2B;
+  margin: 0 0 4px;
+  font-weight: 800;
+}
+
+.cadastro-titulo p {
+  color: #56899F;
+  font-size: 13px;
+  margin: 0;
+}
+
+.cadastro-input {
+  width: 100% !important;
+  height: 50px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 0 16px !important;
+  margin-bottom: 12px !important;
+  background-color: #ECFEFF !important;
+  border: 1.5px solid #a5e3f0 !important;
+  border-radius: 12px !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.cadastro-input:focus-within {
+  border-color: #1b89a8 !important;
+  background-color: #ECFEFF !important;
+}
+
+.cadastro-input input {
+  flex: 1 !important;
+  height: 100% !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  color: #084b68 !important;
+  font-size: 14px !important;
+  box-shadow: none !important;
+}
+
+.cadastro-input input::placeholder {
+  color: #688596 !important;
+  opacity: 1 !important;
+}
+
+.cadastro-input input:-webkit-autofill,
+.cadastro-input input:-webkit-autofill:hover, 
+.cadastro-input input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 30px #ECFEFF inset !important;
+  -webkit-text-fill-color: #084b68 !important;
+}
+
+.cadastro-olho {
+  border: none !important;
+  background: transparent !important;
+  color: #1b89a8 !important;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==============================================================
+   4. BOTÕES E LINKS
+   ============================================================== */
+
+.cadastro-botao {
+  width: 100% !important;
+  height: 50px !important;
+  margin-top: 6px !important;
+  border: none !important;
+  border-radius: 12px !important;
+  background-color: #084b68 !important;
+  color: #FFFFFF !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.cadastro-botao:hover {
+  background-color: #1b89a8 !important;
+}
+
+.cadastro-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 18px;
+  font-size: 13px;
+  color: #56899F;
+}
+
+.cadastro-btn-entrar {
+  background: transparent !important;
+  border: none !important;
+  color: #1b89a8 !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  text-decoration: none;
+}
+
+.cadastro-btn-entrar:hover {
+  text-decoration: underline !important;
+}
+
+/* Ícones do Icons8 */
+.icone-icons8 {
+  width: 20px !important;
+  height: 20px !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+}

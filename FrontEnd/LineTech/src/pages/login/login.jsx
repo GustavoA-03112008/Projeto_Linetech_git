@@ -75,7 +75,7 @@ export default function Login() {
         <div className="links-container">
           <span className="forgot-password">Esqueceu sua senha?</span>
           <span className="no-account">
-            Não tem uma conta? <a href="/solicitar-acesso" className="request-access">Solicitar acesso</a>
+            Não tem uma conta? <a href="/cadastro" className="request-access">Criar conta</a>
           </span>
         </div>
 
