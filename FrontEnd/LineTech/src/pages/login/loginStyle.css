@@ -172,7 +172,7 @@
 
 .forgot-password {
   color: #084b68;
-  text-decoration: underline;
+  text-decoration: none;
   cursor: pointer;
 }
 

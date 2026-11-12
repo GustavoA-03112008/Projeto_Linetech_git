@@ -1,0 +1,45 @@
+/* Reutiliza toda a estrutura visual e responsividade do Login */
+@import url('../login/loginStyle.css');
+
+/* Ajustes específicos para a tela de recuperação */
+.enviado-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  animation: fadeIn 0.3s ease;
+}
+
+.enviado-icone {
+  background-color: #e3f7fa;
+  border: 1px solid #bce4ef;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px auto; /* Garante centralização do círculo na caixa */
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.enviado-icone img {
+  display: block;
+  margin: 0 4px;
+  transform: translateX(-1px); /* Compensa o peso visual assimétrico do desenho do V */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Garante que não haja rolagem lateral no responsivo */
+@media (max-width: 480px) {
+  .content-wrapper {
+    width: 100%;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+}

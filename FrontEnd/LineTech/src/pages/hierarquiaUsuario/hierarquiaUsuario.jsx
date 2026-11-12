@@ -8,10 +8,6 @@ const niveisAcesso = [
     descricao: 'Acesso total ao sistema.',
   },
   {
-    cargo: 'Coordenação',
-    descricao: 'Pode reservar todas as salas e aprovar solicitações.',
-  },
-  {
     cargo: 'Professor',
     descricao: 'Reserva salas permitidas e solicita acesso às restritas.',
   }
