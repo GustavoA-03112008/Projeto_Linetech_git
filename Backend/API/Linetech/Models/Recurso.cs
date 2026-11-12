@@ -1,5 +1,4 @@
-﻿
-namespace Linetech.Models
+﻿namespace Linetech.Models
 {
 	public class Recurso
 	{
