@@ -4,13 +4,31 @@ import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../../services/api';
 import './consultarDisponibilidadeStyle.css';
 
+function obterDataAtual() {
+  const hoje = new Date();
+  const ano = hoje.getFullYear();
+  const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+  const dia = String(hoje.getDate()).padStart(2, '0');
+
+  return `${ano}-${mes}-${dia}`;
+}
+
 export default function ConsultarDisponibilidade() {
   const navigate = useNavigate();
 
   // Estados das salas
   const [salas, setSalas] = useState([]);
+  const [salasDisponiveis, setSalasDisponiveis] = useState([]);
   const [carregando, setCarregando] = useState(true);
+  const [buscando, setBuscando] = useState(false);
   const [erro, setErro] = useState('');
+  const [erroBusca, setErroBusca] = useState('');
+  const [buscouDisponibilidade, setBuscouDisponibilidade] = useState(false);
+
+  // Estados dos filtros
+  const [data, setData] = useState(obterDataAtual());
+  const [horaInicio, setHoraInicio] = useState('08:00');
+  const [horaFim, setHoraFim] = useState('12:00');
 
   // Carrega as salas cadastradas na API
   useEffect(() => {
@@ -24,9 +42,7 @@ export default function ConsultarDisponibilidade() {
         setSalas(Array.isArray(dados) ? dados : []);
       } catch (error) {
         console.error('Erro ao carregar salas:', error);
-        setErro(
-          error.message || 'Não foi possível carregar as salas.'
-        );
+        setErro(error.message || 'Não foi possível carregar as salas.');
       } finally {
         setCarregando(false);
       }
@@ -35,17 +51,82 @@ export default function ConsultarDisponibilidade() {
     carregarSalas();
   }, []);
 
+  // Busca a disponibilidade das salas no período selecionado
+  async function buscarDisponibilidade() {
+    setErroBusca('');
+    setSalasDisponiveis([]);
+    setBuscouDisponibilidade(false);
+
+    if (!data || !horaInicio || !horaFim) {
+      setErroBusca('Preencha a data e os horários.');
+      return;
+    }
+
+    if (horaFim <= horaInicio) {
+      setErroBusca('O horário final deve ser posterior ao horário inicial.');
+      return;
+    }
+
+    const salasAtivas = salas.filter(
+      sala => sala.disponivel ?? sala.Disponivel
+    );
+
+    if (salasAtivas.length === 0) {
+      setErroBusca('Não existem salas marcadas como disponíveis.');
+      return;
+    }
+
+    try {
+      setBuscando(true);
+
+      const dataInicio = `${data}T${horaInicio}:00`;
+      const dataFim = `${data}T${horaFim}:00`;
+
+      const resultados = await Promise.all(
+        salasAtivas.map(async sala => {
+          const id = sala.id ?? sala.Id;
+
+          const resposta = await apiRequest(
+            `/api/Salas/${id}/disponibilidade?dataInicio=${encodeURIComponent(dataInicio)}&dataFim=${encodeURIComponent(dataFim)}`
+          );
+
+          return {
+            sala,
+            disponivel: resposta?.disponivel ?? resposta?.Disponivel
+          };
+        })
+      );
+
+      const disponiveis = resultados
+        .filter(resultado => resultado.disponivel === true)
+        .map(resultado => resultado.sala);
+
+      setSalasDisponiveis(disponiveis);
+      setBuscouDisponibilidade(true);
+
+    } catch (error) {
+      console.error('Erro ao consultar disponibilidade:', error);
+      setErroBusca(
+        error.message || 'Não foi possível consultar a disponibilidade das salas.'
+      );
+    } finally {
+      setBuscando(false);
+    }
+  }
+
+  // Define quais salas serão exibidas
+  const salasExibidas = buscouDisponibilidade
+    ? salasDisponiveis
+    : salas.filter(sala => sala.disponivel ?? sala.Disponivel);
+
   return (
     <div className="consultar-disponibilidade-page dashboard-container">
 
-      {/* BARRA LATERAL (SIDEBAR) */}
+      {/* BARRA LATERAL */}
       <aside className="sidebar">
         <div className="sidebar-menu">
 
-          <div
-            className="menu-item"
-            onClick={() => navigate('/inicio')}
-          >
+          <div className="menu-item" onClick={() => navigate('/inicio')}>
             <img
               className="menu-icon"
               width="22"
@@ -56,10 +137,7 @@ export default function ConsultarDisponibilidade() {
             Início
           </div>
 
-          <div
-            className="menu-item"
-            onClick={() => navigate('/historico')}
-          >
+          <div className="menu-item" onClick={() => navigate('/historico')}>
             <img
               className="menu-icon"
               width="22"
@@ -84,10 +162,7 @@ export default function ConsultarDisponibilidade() {
             Salas
           </div>
 
-          <div
-            className="menu-item"
-            onClick={() => navigate('/solicitacoes')}
-          >
+          <div className="menu-item" onClick={() => navigate('/solicitacoes')}>
             <img
               className="menu-icon"
               width="22"
@@ -98,10 +173,7 @@ export default function ConsultarDisponibilidade() {
             Solicitações
           </div>
 
-          <div
-            className="menu-item"
-            onClick={() => navigate('/perfil')}
-          >
+          <div className="menu-item" onClick={() => navigate('/perfil')}>
             <img
               className="menu-icon"
               width="22"
@@ -118,7 +190,7 @@ export default function ConsultarDisponibilidade() {
       {/* ÁREA PRINCIPAL */}
       <main className="main-content">
 
-        {/* BARRA SUPERIOR (TOPBAR) */}
+        {/* BARRA SUPERIOR */}
         <header className="topbar">
 
           <div className="search-container">
@@ -191,7 +263,7 @@ export default function ConsultarDisponibilidade() {
         {/* CONTEÚDO DA PÁGINA */}
         <div className="dashboard-content">
 
-          {/* TÍTULO COM BOTÃO VOLTAR */}
+          {/* TÍTULO */}
           <div
             style={{
               display: 'flex',
@@ -222,9 +294,10 @@ export default function ConsultarDisponibilidade() {
 
               <div className="form-input-wrapper">
                 <input
-                  type="text"
+                  type="date"
                   className="form-input"
-                  defaultValue="08/10/2026"
+                  value={data}
+                  onChange={e => setData(e.target.value)}
                 />
 
                 <img
@@ -243,13 +316,12 @@ export default function ConsultarDisponibilidade() {
                 <label className="form-label">Horário</label>
 
                 <div className="form-input-wrapper">
-                  <select className="form-input">
-                    <option>08:00</option>
-                  </select>
-
-                  <span style={{ color: '#26a5ca', fontSize: '12px' }}>
-                    ▼
-                  </span>
+                  <input
+                    type="time"
+                    className="form-input"
+                    value={horaInicio}
+                    onChange={e => setHoraInicio(e.target.value)}
+                  />
                 </div>
               </div>
 
@@ -257,13 +329,12 @@ export default function ConsultarDisponibilidade() {
                 <label className="form-label">Até</label>
 
                 <div className="form-input-wrapper">
-                  <select className="form-input">
-                    <option>12:00</option>
-                  </select>
-
-                  <span style={{ color: '#26a5ca', fontSize: '12px' }}>
-                    ▼
-                  </span>
+                  <input
+                    type="time"
+                    className="form-input"
+                    value={horaFim}
+                    onChange={e => setHoraFim(e.target.value)}
+                  />
                 </div>
               </div>
 
@@ -273,7 +344,7 @@ export default function ConsultarDisponibilidade() {
               <label className="form-label">Tipo de sala</label>
 
               <div className="form-input-wrapper">
-                <select className="form-input">
+                <select className="form-input" disabled>
                   <option>Todos os tipos</option>
                 </select>
 
@@ -283,14 +354,20 @@ export default function ConsultarDisponibilidade() {
               </div>
             </div>
 
-            <button className="btn-buscar" type="button">
+            <button
+              className="btn-buscar"
+              type="button"
+              onClick={buscarDisponibilidade}
+              disabled={buscando || carregando}
+            >
               <img
                 width="20"
                 height="20"
                 src="https://img.icons8.com/material-outlined/24/ffffff/search--v1.png"
                 alt="Buscar"
               />
-              Buscar
+
+              {buscando ? 'Buscando...' : 'Buscar'}
             </button>
 
           </div>
@@ -302,30 +379,44 @@ export default function ConsultarDisponibilidade() {
 
           <div className="room-list">
 
-            {/* Carregamento */}
-            {carregando && (
-              <p>Carregando salas...</p>
-            )}
+            {carregando && <p>Carregando salas...</p>}
 
-            {/* Mensagem de erro */}
             {erro && (
               <p style={{ color: '#d32f2f' }}>
                 {erro}
               </p>
             )}
 
-            {/* Nenhuma sala cadastrada */}
-            {!carregando && !erro && salas.length === 0 && (
-              <p>Nenhuma sala cadastrada.</p>
+            {erroBusca && (
+              <p style={{ color: '#d32f2f' }}>
+                {erroBusca}
+              </p>
             )}
 
-            {/* Lista de salas cadastradas */}
-            {!carregando && !erro && salas
-              .filter(sala => sala.disponivel ?? sala.Disponivel)
-              .map(sala => (
+            {buscando && (
+              <p>Consultando disponibilidade das salas...</p>
+            )}
+
+            {!carregando && !erro && !erroBusca && !buscando &&
+              salasExibidas.length === 0 && (
+                <p>
+                  {buscouDisponibilidade
+                    ? 'Nenhuma sala está disponível para o período selecionado.'
+                    : salas.length === 0
+                      ? 'Nenhuma sala cadastrada.'
+                      : 'Nenhuma sala está marcada como disponível.'}
+                </p>
+              )}
+
+            {!carregando && !erro && !erroBusca && !buscando &&
+              salasExibidas.map(sala => (
                 <div
                   className="room-card"
                   key={sala.id ?? sala.Id}
+                  onClick={() => navigate('/detalhes', {
+                    state: { salaId: sala.id ?? sala.Id }
+                  })}
+                  style={{ cursor: 'pointer' }}
                 >
 
                   <div className="room-icon-bg">
@@ -350,19 +441,11 @@ export default function ConsultarDisponibilidade() {
                   </div>
 
                   <div className="badge-disponivel">
-                    Disponível para consulta
+                    Disponível
                   </div>
 
                 </div>
               ))}
-
-            {/* Existem salas, mas nenhuma está marcada como disponível */}
-            {!carregando &&
-              !erro &&
-              salas.length > 0 &&
-              !salas.some(sala => sala.disponivel ?? sala.Disponivel) && (
-                <p>Nenhuma sala está marcada como disponível.</p>
-              )}
 
           </div>
 

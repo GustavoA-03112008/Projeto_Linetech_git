@@ -218,10 +218,10 @@ export default function Login() {
           <span className="no-account">
             Não tem uma conta?{' '}
             <a
-              href="/solicitar-acesso"
+              href="/cadastro"
               className="request-access"
             >
-              Solicitar acesso
+              Criar Conta
             </a>
           </span>
 

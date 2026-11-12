@@ -28,6 +28,22 @@ namespace Linetech.Controllers
 			return Ok(salas);
 		}
 
+		// Consultar uma sala específica pelo ID
+		[HttpGet("{id}")]
+		public async Task<IActionResult> ConsultarSala(int id)
+		{
+			var sala = await _context.Salas
+				.AsNoTracking()
+				.FirstOrDefaultAsync(s => s.Id == id);
+
+			if (sala == null)
+			{
+				return NotFound("Sala não encontrada.");
+			}
+
+			return Ok(sala);
+		}
+
 		// Cadastrar uma nova sala
 		[HttpPost]
 		public async Task<IActionResult> CadastrarSala(

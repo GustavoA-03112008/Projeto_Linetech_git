@@ -14,7 +14,6 @@ import SalaLiberada from './pages/SalaLiberada/salaLiberada';
 import Perfil from './pages/Perfil/perfil';
 import Configuracoes from './pages/configuracoes/configuracoes';
 import Cadastro from './pages/cadastro/cadastro';
-import Notificacoes from './pages/notificacoes/notificacoes'; // Nome em minúsculo
 import EsqueceuSenha from './pages/esqueceuSenha/EsqueceuSenha'; // Nome em minúsculo
 import './pages/Inicio/inicioStyle.css';
 
@@ -39,7 +38,6 @@ export default function App() {
         <Route path="/liberada" element={<SalaLiberada />} />
         <Route path="/configuracoes" element={<Configuracoes />} />
         <Route path="/perfil" element={<Perfil />} />
-        <Route path="/notificacoes" element={<Notificacoes />} />
         <Route path="/esqueceu-senha" element={<EsqueceuSenha />} />
       </Routes>
     </Router>
