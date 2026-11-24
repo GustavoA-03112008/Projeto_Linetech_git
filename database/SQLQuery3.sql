@@ -310,3 +310,13 @@ EXEC sp_helpindex 'dbo.Usuarios';
 EXEC sp_helpindex 'dbo.Reservas';
 EXEC sp_helpindex 'dbo.Atividades';
 EXEC sp_helpindex 'dbo.SolicitacoesAcesso';
+
+
+
+
+
+
+
+ALTER TABLE SalaRecursos
+ADD Quantidade INT NOT NULL
+    CONSTRAINT DF_SalaRecursos_Quantidade DEFAULT 1;

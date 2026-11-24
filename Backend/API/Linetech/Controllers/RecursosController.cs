@@ -2,6 +2,7 @@
 using Linetech.Data;
 using Linetech.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace Linetech.Controllers
@@ -18,6 +19,7 @@ namespace Linetech.Controllers
 		}
 
 		// Listar todos os recursos
+		[Authorize]
 		[HttpGet]
 		public async Task<IActionResult> Listar()
 		{
@@ -30,6 +32,7 @@ namespace Linetech.Controllers
 		}
 
 		// Buscar um recurso pelo ID
+		[Authorize]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> BuscarPorId(int id)
 		{
@@ -49,6 +52,7 @@ namespace Linetech.Controllers
 		}
 
 		// Cadastrar um novo recurso
+		[Authorize(Roles = "Gestor")]
 		[HttpPost]
 		public async Task<IActionResult> Cadastrar(
 			[FromBody] CadastrarRecursoRequest dados)
@@ -78,6 +82,7 @@ namespace Linetech.Controllers
 		}
 
 		// Editar um recurso existente
+		[Authorize(Roles = "Gestor")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> Editar(
 			int id,
@@ -111,6 +116,7 @@ namespace Linetech.Controllers
 		}
 
 		// Excluir um recurso
+		[Authorize(Roles = "Gestor")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> Excluir(int id)
 		{

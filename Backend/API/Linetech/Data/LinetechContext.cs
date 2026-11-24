@@ -162,6 +162,10 @@ namespace Linetech.Data
 				entity.HasKey(sr => new { sr.SalaId, sr.RecursoId })
 					.HasName("PK_SalaRecursos");
 
+				entity.Property(sr => sr.Quantidade)
+					.IsRequired()
+					.HasDefaultValue(1);
+
 				entity.HasOne(sr => sr.Sala)
 					.WithMany()
 					.HasForeignKey(sr => sr.SalaId)

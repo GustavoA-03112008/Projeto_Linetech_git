@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Linetech.Data;
 using Linetech.Models;
@@ -17,7 +18,8 @@ namespace Linetech.Controllers
 			_context = context;
 		}
 
-		// Listar todas as salas
+		// GET listar todas as salas
+		[Authorize]
 		[HttpGet]
 		public async Task<IActionResult> ListarSalas()
 		{
@@ -28,7 +30,8 @@ namespace Linetech.Controllers
 			return Ok(salas);
 		}
 
-		// Consultar uma sala específica pelo ID
+		// GET sala por ID
+		[Authorize]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> ConsultarSala(int id)
 		{
@@ -37,14 +40,13 @@ namespace Linetech.Controllers
 				.FirstOrDefaultAsync(s => s.Id == id);
 
 			if (sala == null)
-			{
 				return NotFound("Sala não encontrada.");
-			}
 
 			return Ok(sala);
 		}
 
-		// Cadastrar uma nova sala
+		// POST cadastrar sala
+		[Authorize(Roles = "Gestor")]
 		[HttpPost]
 		public async Task<IActionResult> CadastrarSala(
 			[FromBody] CadastrarSalaRequest dados)
@@ -62,29 +64,24 @@ namespace Linetech.Controllers
 			return CreatedAtAction(
 				nameof(ListarSalas),
 				new { id = sala.Id },
-				sala
-			);
+				sala);
 		}
 
-		// Editar uma sala existente
+		// PUT editar sala
+		[Authorize(Roles = "Gestor")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> EditarSala(
 			int id,
 			[FromBody] Sala sala)
 		{
 			if (id != sala.Id)
-			{
 				return BadRequest(
-					"O ID da URL deve ser igual ao ID da sala."
-				);
-			}
+					"O ID da URL deve ser igual ao ID da sala.");
 
 			var salaExistente = await _context.Salas.FindAsync(id);
 
 			if (salaExistente == null)
-			{
 				return NotFound("Sala não encontrada.");
-			}
 
 			salaExistente.Nome = sala.Nome;
 			salaExistente.Capacidade = sala.Capacidade;
@@ -95,16 +92,15 @@ namespace Linetech.Controllers
 			return Ok(salaExistente);
 		}
 
-		// Excluir uma sala existente
+		// DELETE excluir sala
+		[Authorize(Roles = "Gestor")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> ExcluirSala(int id)
 		{
 			var sala = await _context.Salas.FindAsync(id);
 
 			if (sala == null)
-			{
 				return NotFound("Sala não encontrada.");
-			}
 
 			_context.Salas.Remove(sala);
 			await _context.SaveChangesAsync();
@@ -112,7 +108,8 @@ namespace Linetech.Controllers
 			return NoContent();
 		}
 
-		// Consultar os recursos de uma sala
+		// GET recursos da sala, incluindo quantidade
+		[Authorize]
 		[HttpGet("{id}/recursos")]
 		public async Task<IActionResult> ListarRecursosDaSala(int id)
 		{
@@ -121,9 +118,7 @@ namespace Linetech.Controllers
 				.FirstOrDefaultAsync(s => s.Id == id);
 
 			if (sala == null)
-			{
 				return NotFound("Sala não encontrada.");
-			}
 
 			var recursos = await _context.SalaRecursos
 				.Where(sr => sr.SalaId == id)
@@ -131,73 +126,132 @@ namespace Linetech.Controllers
 					_context.Recursos,
 					sr => sr.RecursoId,
 					r => r.Id,
-					(sr, r) => r
-				)
+					(sr, r) => new
+					{
+						Id = r.Id,
+						Nome = r.Nome,
+						Descricao = r.Descricao,
+						Quantidade = sr.Quantidade
+					})
 				.AsNoTracking()
 				.ToListAsync();
 
 			return Ok(recursos);
 		}
 
-		// Adicionar um recurso a uma sala
+		// POST adicionar recurso e somar quantidade
+		[Authorize(Roles = "Gestor")]
 		[HttpPost("{id}/recursos/{recursoId}")]
 		public async Task<IActionResult> AdicionarRecurso(
-			int id, int recursoId)
+			int id,
+			int recursoId,
+			[FromBody] int quantidade)
 		{
+			if (quantidade <= 0)
+				return BadRequest(
+					"A quantidade deve ser maior que zero.");
+
 			var sala = await _context.Salas.FindAsync(id);
 
 			if (sala == null)
-			{
 				return NotFound("Sala não encontrada.");
-			}
 
 			var recurso = await _context.Recursos.FindAsync(recursoId);
 
 			if (recurso == null)
-			{
 				return NotFound("Recurso não encontrado.");
-			}
 
 			var associacao = await _context.SalaRecursos
 				.FindAsync(id, recursoId);
 
 			if (associacao != null)
 			{
-				return Conflict(
-					"Este recurso já está associado à sala."
-				);
+				associacao.Quantidade += quantidade;
+			}
+			else
+			{
+				_context.SalaRecursos.Add(
+					new SalaRecurso
+					{
+						SalaId = id,
+						RecursoId = recursoId,
+						Quantidade = quantidade
+					});
 			}
 
-			_context.SalaRecursos.Add(new SalaRecurso
+			await _context.SaveChangesAsync();
+
+			var quantidadeAtual = associacao?.Quantidade ?? quantidade;
+
+			return Ok(new
 			{
-				SalaId = id,
-				RecursoId = recursoId
+				mensagem = "Quantidade de recursos atualizada com sucesso.",
+				salaId = id,
+				recursoId = recursoId,
+				quantidadeAdicionada = quantidade,
+				quantidadeTotal = quantidadeAtual
 			});
+		}
+
+		// PATCH diminuir quantidade de recurso
+		[Authorize(Roles = "Gestor")]
+		[HttpPatch("{id}/recursos/{recursoId}/quantidade")]
+		public async Task<IActionResult> DiminuirQuantidadeRecurso(
+			int id,
+			int recursoId,
+			[FromBody] int quantidade)
+		{
+			if (quantidade <= 0)
+				return BadRequest(
+					"A quantidade deve ser maior que zero.");
+
+			var associacao = await _context.SalaRecursos
+				.FindAsync(id, recursoId);
+
+			if (associacao == null)
+				return NotFound(
+					"Este recurso não está associado à sala.");
+
+			if (quantidade > associacao.Quantidade)
+				return BadRequest(
+					"A quantidade a remover é maior que a quantidade disponível.");
+
+			associacao.Quantidade -= quantidade;
+
+			int quantidadeRestante = associacao.Quantidade;
+
+			if (quantidadeRestante == 0)
+			{
+				_context.SalaRecursos.Remove(associacao);
+			}
 
 			await _context.SaveChangesAsync();
 
 			return Ok(new
 			{
-				mensagem = "Recurso adicionado à sala com sucesso.",
+				mensagem = quantidadeRestante == 0
+					? "Recurso removido da sala."
+					: "Quantidade de recursos diminuída com sucesso.",
 				salaId = id,
-				recursoId = recursoId
+				recursoId = recursoId,
+				quantidadeRemovida = quantidade,
+				quantidadeRestante = quantidadeRestante
 			});
 		}
 
-		// Remover um recurso de uma sala
+		// DELETE remover completamente o recurso da sala
+		[Authorize(Roles = "Gestor")]
 		[HttpDelete("{id}/recursos/{recursoId}")]
 		public async Task<IActionResult> RemoverRecurso(
-			int id, int recursoId)
+			int id,
+			int recursoId)
 		{
 			var associacao = await _context.SalaRecursos
 				.FindAsync(id, recursoId);
 
 			if (associacao == null)
-			{
 				return NotFound(
-					"Este recurso não está associado à sala."
-				);
-			}
+					"Este recurso não está associado à sala.");
 
 			_context.SalaRecursos.Remove(associacao);
 			await _context.SaveChangesAsync();
@@ -210,7 +264,8 @@ namespace Linetech.Controllers
 			});
 		}
 
-		// Consultar disponibilidade de uma sala em determinado período
+		// GET disponibilidade
+		[Authorize]
 		[HttpGet("{id}/disponibilidade")]
 		public async Task<IActionResult> ConsultarDisponibilidade(
 			int id,
@@ -218,20 +273,15 @@ namespace Linetech.Controllers
 			[FromQuery] DateTime dataFim)
 		{
 			if (dataFim <= dataInicio)
-			{
 				return BadRequest(
-					"A data final deve ser posterior à data inicial."
-				);
-			}
+					"A data final deve ser posterior à data inicial.");
 
 			var sala = await _context.Salas
 				.AsNoTracking()
 				.FirstOrDefaultAsync(s => s.Id == id);
 
 			if (sala == null)
-			{
 				return NotFound("Sala não encontrada.");
-			}
 
 			if (!sala.Disponivel)
 			{

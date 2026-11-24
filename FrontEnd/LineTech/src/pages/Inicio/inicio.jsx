@@ -29,6 +29,7 @@ export default function Inicio() {
   }
 
   const usuario = recuperarUsuario();
+  const ehGestor = usuario?.perfil === 'Gestor';
 
   // Identifica o nome do usuário
   const nomeUsuario =
@@ -318,18 +319,21 @@ export default function Inicio() {
           {/* GRELHA DE AÇÕES */}
           <div className="action-grid">
 
-            <div
-              className="action-card"
-              onClick={() => navigate('/gestao')}
-            >
-              <img
-                width="36"
-                height="36"
-                src="https://img.icons8.com/material-outlined/48/1b89a8/calendar--v1.png"
-                alt="Reservar sala"
-              />
-              <h3>Gestão de Sala</h3>
-            </div>
+            {/* Aparece somente para Gestor */}
+            {ehGestor && (
+              <div
+                className="action-card"
+                onClick={() => navigate('/gestao')}
+              >
+                <img
+                  width="36"
+                  height="36"
+                  src="https://img.icons8.com/material-outlined/48/1b89a8/calendar--v1.png"
+                  alt="Reservar sala"
+                />
+                <h3>Gestão de Sala</h3>
+              </div>
+            )}
 
             <div
               className="action-card"
