@@ -136,6 +136,52 @@ namespace Linetech.Controllers
 				);
 			}
 
+			// Busca as configurações da sala
+			var configuracao = await _context.ConfiguracoesSalas
+				.FirstOrDefaultAsync(c => c.SalaId == dados.SalaId);
+
+			// Valores padrão caso não existam configurações
+			int antecedenciaMinima =
+				configuracao?.AntecedenciaMinima ?? 1;
+
+			int duracaoMaxima =
+				configuracao?.DuracaoMaxima ?? 4;
+
+			// Verifica se a sala está em manutenção
+			if (configuracao?.Manutencao == true)
+			{
+				return BadRequest(
+					"Não é possível reservar esta sala, pois ela está em manutenção."
+				);
+			}
+
+			// Verifica a antecedência mínima em dias
+			var agora = DateTime.Now;
+
+			// Normaliza a data recebida para comparação com o horário local
+			var dataInicio = dados.DataInicio.Kind == DateTimeKind.Utc
+				? dados.DataInicio.ToLocalTime()
+				: dados.DataInicio;
+
+			var dataLimite = agora.AddDays(antecedenciaMinima);
+
+			if (dataInicio < dataLimite)
+			{
+				return BadRequest(
+					$"A reserva deve ser realizada com pelo menos {antecedenciaMinima} dia(s) de antecedência."
+				);
+			}
+
+			// Verifica a duração máxima em horas
+			if (dados.DataFim >
+				dados.DataInicio.AddHours(duracaoMaxima))
+			{
+				return BadRequest(
+					$"A duração máxima permitida para esta sala é de {duracaoMaxima} hora(s)."
+				);
+			}
+
+			// Verifica conflitos com outras reservas
 			bool conflito = await _context.Reservas.AnyAsync(r =>
 				r.SalaId == dados.SalaId &&
 				(r.Status == "Pendente" ||
@@ -242,6 +288,49 @@ namespace Linetech.Controllers
 				return BadRequest("Status inválido.");
 			}
 
+			// Busca as configurações da sala
+			var configuracao = await _context.ConfiguracoesSalas
+				.FirstOrDefaultAsync(c => c.SalaId == dados.SalaId);
+
+			int antecedenciaMinima =
+				configuracao?.AntecedenciaMinima ?? 1;
+
+			int duracaoMaxima =
+				configuracao?.DuracaoMaxima ?? 4;
+
+			// Aplica as regras somente para reservas ativas
+			if (dados.Status == "Pendente" ||
+				dados.Status == "Confirmada")
+			{
+				if (configuracao?.Manutencao == true)
+				{
+					return BadRequest(
+						"Não é possível reservar esta sala, pois ela está em manutenção."
+					);
+				}
+
+				// Verifica a antecedência mínima em dias
+				var dataLimite =
+					DateTime.Now.AddDays(antecedenciaMinima);
+
+				if (dados.DataInicio < dataLimite)
+				{
+					return BadRequest(
+						$"A reserva deve ser realizada com pelo menos {antecedenciaMinima} dia(s) de antecedência."
+					);
+				}
+
+				// Verifica a duração máxima em horas
+				if (dados.DataFim >
+					dados.DataInicio.AddHours(duracaoMaxima))
+				{
+					return BadRequest(
+						$"A duração máxima permitida para esta sala é de {duracaoMaxima} hora(s)."
+					);
+				}
+			}
+
+			// Verifica conflitos com outras reservas
 			bool conflito = await _context.Reservas.AnyAsync(r =>
 				r.Id != id &&
 				r.SalaId == dados.SalaId &&
@@ -295,6 +384,33 @@ namespace Linetech.Controllers
 			{
 				return BadRequest(
 					"Não é possível cancelar uma reserva concluída."
+				);
+			}
+
+			// Busca as configurações da sala
+			var configuracao = await _context.ConfiguracoesSalas
+				.FirstOrDefaultAsync(c => c.SalaId == reserva.SalaId);
+
+			// Verifica se o cancelamento está permitido
+			if (configuracao?.PermitirCancelamento == false)
+			{
+				return BadRequest(
+					"O cancelamento de reservas não está permitido para esta sala."
+				);
+			}
+
+			// Verifica o prazo mínimo de cancelamento
+			int prazoCancelamento =
+				configuracao?.PrazoCancelamento ?? 2;
+
+			var prazoLimite = reserva.DataInicio.AddDays(
+				-prazoCancelamento
+			);
+
+			if (DateTime.Now > prazoLimite)
+			{
+				return BadRequest(
+					$"O cancelamento deve ser realizado com pelo menos {prazoCancelamento} dia(s) de antecedência."
 				);
 			}
 

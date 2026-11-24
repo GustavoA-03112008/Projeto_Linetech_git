@@ -309,5 +309,173 @@ namespace Linetech.Controllers
 					: "A sala está disponível nesse período."
 			});
 		}
+
+		// GET consultar configurações da sala
+		[Authorize]
+		[HttpGet("{id}/configuracoes")]
+		public async Task<IActionResult> ConsultarConfiguracoes(int id)
+		{
+			var sala = await _context.Salas
+				.AsNoTracking()
+				.FirstOrDefaultAsync(s => s.Id == id);
+
+			if (sala == null)
+				return NotFound("Sala não encontrada.");
+
+			var configuracao = await _context.ConfiguracoesSalas
+				.AsNoTracking()
+				.FirstOrDefaultAsync(c => c.SalaId == id);
+
+			if (configuracao == null)
+			{
+				configuracao = new ConfiguracaoSala
+				{
+					SalaId = id,
+					AntecedenciaMinima = 1,
+					DuracaoMaxima = 4,
+					ReservasRecorrentes = false,
+					PermitirCancelamento = true,
+					PrazoCancelamento = 2,
+					Manutencao = false,
+					MotivoManutencao = null
+				};
+			}
+
+			return Ok(configuracao);
+		}
+
+		// PUT cadastrar ou atualizar configurações da sala
+		[Authorize(Roles = "Gestor")]
+		[HttpPut("{id}/configuracoes")]
+		public async Task<IActionResult> SalvarConfiguracoes(
+			int id,
+			[FromBody] ConfiguracaoSalaRequest dados)
+		{
+			var sala = await _context.Salas.FindAsync(id);
+
+			if (sala == null)
+				return NotFound("Sala não encontrada.");
+
+			if (dados.AntecedenciaMinima < 0)
+				return BadRequest(
+					"A antecedência mínima não pode ser negativa.");
+
+			if (dados.DuracaoMaxima <= 0)
+				return BadRequest(
+					"A duração máxima deve ser maior que zero.");
+
+			if (dados.PrazoCancelamento < 0)
+				return BadRequest(
+					"O prazo de cancelamento não pode ser negativo.");
+
+			if (dados.Manutencao &&
+				string.IsNullOrWhiteSpace(dados.MotivoManutencao))
+			{
+				return BadRequest(
+					"Informe o motivo da manutenção.");
+			}
+
+			var configuracao = await _context.ConfiguracoesSalas
+				.FirstOrDefaultAsync(c => c.SalaId == id);
+
+			if (configuracao == null)
+			{
+				configuracao = new ConfiguracaoSala
+				{
+					SalaId = id
+				};
+
+				_context.ConfiguracoesSalas.Add(configuracao);
+			}
+
+			configuracao.AntecedenciaMinima = dados.AntecedenciaMinima;
+			configuracao.DuracaoMaxima = dados.DuracaoMaxima;
+			configuracao.ReservasRecorrentes = dados.ReservasRecorrentes;
+			configuracao.PermitirCancelamento = dados.PermitirCancelamento;
+			configuracao.PrazoCancelamento = dados.PrazoCancelamento;
+			configuracao.Manutencao = dados.Manutencao;
+			configuracao.MotivoManutencao = dados.Manutencao
+				? dados.MotivoManutencao
+				: null;
+			configuracao.DataAtualizacao = DateTime.Now;
+
+			await _context.SaveChangesAsync();
+
+			return Ok(new
+			{
+				mensagem = "Configurações da sala salvas com sucesso.",
+				configuracao
+			});
+		}
+
+		// GET consultar permissões da sala
+		[Authorize]
+		[HttpGet("{id}/permissoes")]
+		public async Task<IActionResult> ConsultarPermissoes(int id)
+		{
+			var sala = await _context.Salas
+				.AsNoTracking()
+				.FirstOrDefaultAsync(s => s.Id == id);
+
+			if (sala == null)
+				return NotFound("Sala não encontrada.");
+
+			var permissao = await _context.PermissoesSalas
+				.AsNoTracking()
+				.FirstOrDefaultAsync(p => p.SalaId == id);
+
+			if (permissao == null)
+			{
+				permissao = new PermissaoSala
+				{
+					SalaId = id,
+					Professor = true,
+					Gestor = true,
+					PermitirReservas = true,
+					AcessoRestrito = false
+				};
+			}
+
+			return Ok(permissao);
+		}
+
+		// PUT cadastrar ou atualizar permissões da sala
+		[Authorize(Roles = "Gestor")]
+		[HttpPut("{id}/permissoes")]
+		public async Task<IActionResult> SalvarPermissoes(
+			int id,
+			[FromBody] PermissaoSalaRequest dados)
+		{
+			var sala = await _context.Salas.FindAsync(id);
+
+			if (sala == null)
+				return NotFound("Sala não encontrada.");
+
+			var permissao = await _context.PermissoesSalas
+				.FirstOrDefaultAsync(p => p.SalaId == id);
+
+			if (permissao == null)
+			{
+				permissao = new PermissaoSala
+				{
+					SalaId = id
+				};
+
+				_context.PermissoesSalas.Add(permissao);
+			}
+
+			permissao.Professor = dados.Professor;
+			permissao.Gestor = dados.Gestor;
+			permissao.PermitirReservas = dados.PermitirReservas;
+			permissao.AcessoRestrito = dados.AcessoRestrito;
+
+			await _context.SaveChangesAsync();
+
+			return Ok(new
+			{
+				mensagem = "Permissões da sala salvas com sucesso.",
+				permissao
+			});
+		}
 	}
 }

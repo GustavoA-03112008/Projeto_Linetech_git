@@ -7,26 +7,37 @@ import './gestaoDeSalaStyle.css';
 export default function GestaoDeSala() {
   const navigate = useNavigate();
 
-  // Controle das abas
   const [activeTab, setActiveTab] = useState('informacoes');
 
-  // Estados das salas
+  // =====================================
+  // ESTADOS DAS SALAS
+  // =====================================
+
   const [salas, setSalas] = useState([]);
   const [salaSelecionada, setSalaSelecionada] = useState('');
   const [termoBusca, setTermoBusca] = useState('');
   const [carregandoSalas, setCarregandoSalas] = useState(true);
   const [erroSalas, setErroSalas] = useState('');
 
-  // Estados dos recursos associados à sala
+  // =====================================
+  // RECURSOS ASSOCIADOS À SALA
+  // =====================================
+
   const [recursos, setRecursos] = useState([]);
   const [carregandoRecursos, setCarregandoRecursos] = useState(false);
   const [erroRecursos, setErroRecursos] = useState('');
 
-  // Estados de todos os recursos cadastrados
+  // =====================================
+  // TODOS OS RECURSOS CADASTRADOS
+  // =====================================
+
   const [todosRecursos, setTodosRecursos] = useState([]);
   const [carregandoTodosRecursos, setCarregandoTodosRecursos] = useState(false);
 
-  // Estados do modal
+  // =====================================
+  // MODAL DE RECURSOS
+  // =====================================
+
   const [modalRecursosAberto, setModalRecursosAberto] = useState(false);
   const [recursoSelecionado, setRecursoSelecionado] = useState('');
   const [quantidadeRecurso, setQuantidadeRecurso] = useState('1');
@@ -34,12 +45,53 @@ export default function GestaoDeSala() {
   const [mensagemRecurso, setMensagemRecurso] = useState('');
   const [erroModal, setErroModal] = useState('');
 
-  // Estados para operações nos recursos
+  // =====================================
+  // OPERAÇÕES NOS RECURSOS
+  // =====================================
+
   const [removendoRecurso, setRemovendoRecurso] = useState(null);
   const [alterandoQuantidade, setAlterandoQuantidade] = useState(null);
 
   // =====================================
-  // CARREGAR SALAS DA API
+  // PERMISSÕES
+  // =====================================
+
+  const [permissoes, setPermissoes] = useState({
+    professor: true,
+    gestor: true,
+    permitirReservas: true,
+    acessoRestrito: false
+  });
+
+  const [carregandoPermissoes, setCarregandoPermissoes] = useState(false);
+  const [salvandoPermissoes, setSalvandoPermissoes] = useState(false);
+  const [erroPermissoes, setErroPermissoes] = useState('');
+  const [mensagemPermissoes, setMensagemPermissoes] = useState('');
+
+  // =====================================
+  // CONFIGURAÇÕES
+  // =====================================
+
+  const [configuracoes, setConfiguracoes] = useState({
+    nome: '',
+    capacidade: '',
+    descricao: '',
+    status: 'Ativa',
+    antecedenciaMinima: '1',
+    duracaoMaxima: '4',
+    reservasRecorrentes: false,
+    permitirCancelamento: true,
+    prazoCancelamento: '2',
+    manutencao: false,
+    motivoManutencao: ''
+  });
+
+  const [salvandoConfiguracoes, setSalvandoConfiguracoes] = useState(false);
+  const [erroConfiguracoes, setErroConfiguracoes] = useState('');
+  const [mensagemConfiguracoes, setMensagemConfiguracoes] = useState('');
+
+  // =====================================
+  // CARREGAR SALAS
   // =====================================
 
   useEffect(() => {
@@ -62,6 +114,7 @@ export default function GestaoDeSala() {
         }
       } catch (erro) {
         console.error('Erro ao carregar salas:', erro);
+
         setErroSalas(
           erro.message || 'Não foi possível carregar as salas.'
         );
@@ -74,7 +127,7 @@ export default function GestaoDeSala() {
   }, []);
 
   // =====================================
-  // CARREGAR TODOS OS RECURSOS CADASTRADOS
+  // CARREGAR TODOS OS RECURSOS
   // =====================================
 
   useEffect(() => {
@@ -88,7 +141,7 @@ export default function GestaoDeSala() {
           Array.isArray(dados) ? dados : []
         );
       } catch (erro) {
-        console.error('Erro ao carregar todos os recursos:', erro);
+        console.error('Erro ao carregar recursos:', erro);
       } finally {
         setCarregandoTodosRecursos(false);
       }
@@ -98,7 +151,7 @@ export default function GestaoDeSala() {
   }, []);
 
   // =====================================
-  // FILTRAR SALAS PELA PESQUISA
+  // FILTRAR SALAS
   // =====================================
 
   const salasFiltradas = salas.filter((sala) => {
@@ -112,7 +165,7 @@ export default function GestaoDeSala() {
   });
 
   // =====================================
-  // IDENTIFICAR SALA SELECIONADA
+  // SALA SELECIONADA
   // =====================================
 
   const salaAtual = salas.find(
@@ -182,7 +235,123 @@ export default function GestaoDeSala() {
   }, [salaSelecionada]);
 
   // =====================================
-  // RECURSOS DISPONÍVEIS PARA ADICIONAR
+  // ATUALIZAR DADOS DA SALA
+  // =====================================
+
+  useEffect(() => {
+    if (!salaAtual) return;
+
+    setConfiguracoes((anterior) => ({
+      ...anterior,
+      nome: salaAtual.nome ?? salaAtual.Nome ?? '',
+      capacidade: String(
+        salaAtual.capacidade ?? salaAtual.Capacidade ?? ''
+      )
+    }));
+  }, [salaSelecionada]);
+
+  // =====================================
+  // CARREGAR CONFIGURAÇÕES DA API
+  // =====================================
+
+  useEffect(() => {
+    async function carregarConfiguracoes() {
+      if (!salaSelecionada) return;
+
+      try {
+        const dados = await apiRequest(
+          `/api/Salas/${salaSelecionada}/configuracoes`
+        );
+
+        setConfiguracoes((anterior) => ({
+          ...anterior,
+          antecedenciaMinima: String(
+            dados.antecedenciaMinima ?? 1
+          ),
+          duracaoMaxima: String(
+            dados.duracaoMaxima ?? 4
+          ),
+          reservasRecorrentes:
+            dados.reservasRecorrentes ?? false,
+          permitirCancelamento:
+            dados.permitirCancelamento ?? true,
+          prazoCancelamento: String(
+            dados.prazoCancelamento ?? 2
+          ),
+          manutencao: dados.manutencao ?? false,
+          motivoManutencao:
+            dados.motivoManutencao ?? ''
+        }));
+      } catch (erro) {
+        console.error(
+          'Erro ao carregar configurações:',
+          erro
+        );
+      }
+    }
+
+    carregarConfiguracoes();
+  }, [salaSelecionada]);
+
+  // =====================================
+  // CARREGAR PERMISSÕES DA API
+  // =====================================
+
+  useEffect(() => {
+    if (!salaSelecionada) {
+      setPermissoes({
+        professor: true,
+        gestor: true,
+        permitirReservas: true,
+        acessoRestrito: false
+      });
+      return;
+    }
+
+    let cancelado = false;
+
+    async function carregarPermissoes() {
+      try {
+        setCarregandoPermissoes(true);
+        setErroPermissoes('');
+        setMensagemPermissoes('');
+
+        const dados = await apiRequest(
+          `/api/Salas/${salaSelecionada}/permissoes`
+        );
+
+        if (cancelado) return;
+
+        setPermissoes({
+          professor: dados.professor ?? true,
+          gestor: dados.gestor ?? true,
+          permitirReservas: dados.permitirReservas ?? true,
+          acessoRestrito: dados.acessoRestrito ?? false
+        });
+      } catch (erro) {
+        if (cancelado) return;
+
+        console.error('Erro ao carregar permissões:', erro);
+
+        setErroPermissoes(
+          erro.message || 'Não foi possível carregar as permissões.'
+        );
+      } finally {
+        if (!cancelado) {
+          setCarregandoPermissoes(false);
+        }
+      }
+    }
+
+    carregarPermissoes();
+
+    return () => {
+      cancelado = true;
+    };
+  }, [salaSelecionada]);
+
+  // =====================================
+  // RECURSOS DISPONÍVEIS
   // =====================================
 
   const recursosDisponiveis = todosRecursos;
@@ -214,7 +383,7 @@ export default function GestaoDeSala() {
   }
 
   // =====================================
-  // ADICIONAR RECURSO À SALA
+  // ADICIONAR RECURSO
   // =====================================
 
   async function adicionarRecurso() {
@@ -256,7 +425,6 @@ export default function GestaoDeSala() {
 
       setRecursoSelecionado('');
       setQuantidadeRecurso('1');
-
     } catch (erro) {
       console.error('Erro ao adicionar recurso:', erro);
 
@@ -269,7 +437,7 @@ export default function GestaoDeSala() {
   }
 
   // =====================================
-  // DIMINUIR QUANTIDADE DO RECURSO
+  // DIMINUIR QUANTIDADE
   // =====================================
 
   async function diminuirQuantidadeRecurso(recursoId) {
@@ -295,7 +463,6 @@ export default function GestaoDeSala() {
       );
 
       await carregarRecursosDaSala();
-
     } catch (erro) {
       console.error('Erro ao diminuir quantidade:', erro);
 
@@ -308,7 +475,7 @@ export default function GestaoDeSala() {
   }
 
   // =====================================
-  // REMOVER RECURSO COMPLETAMENTE DA SALA
+  // REMOVER RECURSO COMPLETAMENTE
   // =====================================
 
   async function removerRecurso(recursoId) {
@@ -330,7 +497,6 @@ export default function GestaoDeSala() {
       );
 
       await carregarRecursosDaSala();
-
     } catch (erro) {
       console.error('Erro ao remover recurso:', erro);
 
@@ -339,6 +505,197 @@ export default function GestaoDeSala() {
       );
     } finally {
       setRemovendoRecurso(null);
+    }
+  }
+
+  // =====================================
+  // ATUALIZAR PERMISSÕES
+  // =====================================
+
+  function atualizarPermissao(campo, valor) {
+    setPermissoes((anterior) => ({
+      ...anterior,
+      [campo]: valor
+    }));
+
+    setMensagemPermissoes('');
+    setErroPermissoes('');
+  }
+
+  // =====================================
+  // SALVAR PERMISSÕES NA API
+  // =====================================
+
+  async function salvarPermissoes() {
+    if (!salaSelecionada) {
+      setErroPermissoes('Selecione uma sala antes de salvar.');
+      return;
+    }
+
+    try {
+      setSalvandoPermissoes(true);
+      setErroPermissoes('');
+      setMensagemPermissoes('');
+
+      const dados = await apiRequest(
+        `/api/Salas/${salaSelecionada}/permissoes`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(permissoes)
+        }
+      );
+
+      setPermissoes({
+        professor: dados.permissao?.professor ?? permissoes.professor,
+        gestor: dados.permissao?.gestor ?? permissoes.gestor,
+        permitirReservas:
+          dados.permissao?.permitirReservas ?? permissoes.permitirReservas,
+        acessoRestrito:
+          dados.permissao?.acessoRestrito ?? permissoes.acessoRestrito
+      });
+
+      setMensagemPermissoes(
+        dados.mensagem || 'Permissões salvas com sucesso!'
+      );
+    } catch (erro) {
+      console.error('Erro ao salvar permissões:', erro);
+
+      setErroPermissoes(
+        erro.message || 'Não foi possível salvar as permissões.'
+      );
+    } finally {
+      setSalvandoPermissoes(false);
+    }
+  }
+
+  // =====================================
+  // ATUALIZAR CONFIGURAÇÕES
+  // =====================================
+
+  function atualizarConfiguracao(campo, valor) {
+    setConfiguracoes((anterior) => ({
+      ...anterior,
+      [campo]: valor
+    }));
+
+    setErroConfiguracoes('');
+    setMensagemConfiguracoes('');
+  }
+
+  // =====================================
+  // SALVAR CONFIGURAÇÕES NA API
+  // =====================================
+
+  async function salvarConfiguracoes() {
+    if (!salaSelecionada) {
+      setErroConfiguracoes(
+        'Selecione uma sala antes de salvar.'
+      );
+      return;
+    }
+
+    const antecedenciaMinima = Number(
+      configuracoes.antecedenciaMinima
+    );
+
+    const duracaoMaxima = Number(
+      configuracoes.duracaoMaxima
+    );
+
+    const prazoCancelamento = Number(
+      configuracoes.prazoCancelamento
+    );
+
+    if (
+      configuracoes.antecedenciaMinima === '' ||
+      !Number.isInteger(antecedenciaMinima) ||
+      antecedenciaMinima < 0
+    ) {
+      setErroConfiguracoes(
+        'Informe uma antecedência mínima válida.'
+      );
+      return;
+    }
+
+    if (
+      configuracoes.duracaoMaxima === '' ||
+      !Number.isInteger(duracaoMaxima) ||
+      duracaoMaxima <= 0
+    ) {
+      setErroConfiguracoes(
+        'Informe uma duração máxima válida.'
+      );
+      return;
+    }
+
+    if (
+      configuracoes.prazoCancelamento === '' ||
+      !Number.isInteger(prazoCancelamento) ||
+      prazoCancelamento < 0
+    ) {
+      setErroConfiguracoes(
+        'Informe um prazo de cancelamento válido.'
+      );
+      return;
+    }
+
+    if (
+      configuracoes.manutencao &&
+      !configuracoes.motivoManutencao.trim()
+    ) {
+      setErroConfiguracoes(
+        'Informe o motivo da manutenção.'
+      );
+      return;
+    }
+
+    try {
+      setSalvandoConfiguracoes(true);
+      setErroConfiguracoes('');
+      setMensagemConfiguracoes('');
+
+      const dados = await apiRequest(
+        `/api/Salas/${salaSelecionada}/configuracoes`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            antecedenciaMinima,
+            duracaoMaxima,
+            reservasRecorrentes:
+              configuracoes.reservasRecorrentes,
+            permitirCancelamento:
+              configuracoes.permitirCancelamento,
+            prazoCancelamento,
+            manutencao: configuracoes.manutencao,
+            motivoManutencao: configuracoes.manutencao
+              ? configuracoes.motivoManutencao.trim()
+              : null
+          })
+        }
+      );
+
+      setMensagemConfiguracoes(
+        dados?.mensagem ||
+        'Configurações salvas com sucesso!'
+      );
+    } catch (erro) {
+      console.error(
+        'Erro ao salvar configurações:',
+        erro
+      );
+
+      setErroConfiguracoes(
+        erro.message ||
+        'Não foi possível salvar as configurações.'
+      );
+    } finally {
+      setSalvandoConfiguracoes(false);
     }
   }
 
@@ -566,7 +923,7 @@ export default function GestaoDeSala() {
             </div>
           )}
 
-          {/* CARREGAMENTO E ERROS DAS SALAS */}
+          {/* CARREGAMENTO E ERROS */}
           {carregandoSalas && (
             <p className="mensagem-salas">
               Carregando salas...
@@ -660,7 +1017,6 @@ export default function GestaoDeSala() {
           {activeTab === 'informacoes' && (
             <div className="info-main-card">
 
-              {/* EQUIPAMENTOS */}
               <div className="info-section">
 
                 <div className="section-title-row">
@@ -721,7 +1077,6 @@ export default function GestaoDeSala() {
                               {' '}— Quantidade: {quantidadeAtual}
                             </span>
 
-                            {/* DIMINUIR QUANTIDADE */}
                             <button
                               type="button"
                               className="btn-diminuir-recurso"
@@ -747,7 +1102,6 @@ export default function GestaoDeSala() {
                                 : '−'}
                             </button>
 
-                            {/* REMOVER COMPLETAMENTE */}
                             <button
                               type="button"
                               className="btn-remover-recurso"
@@ -774,30 +1128,13 @@ export default function GestaoDeSala() {
 
               </div>
 
-              {/* QUEM PODE USAR */}
               <div className="info-section">
 
                 <h3>Quem pode usar esta sala</h3>
 
                 <p className="light-text">
-                  Professores, Coordenação e Funcionários
-                  (conforme permissão)
+                  Professores e Gestores (conforme permissão)
                 </p>
-
-              </div>
-
-              {/* HORÁRIOS */}
-              <div className="info-section">
-
-                <h3>Horários disponíveis</h3>
-
-                <div className="days-row">
-                  <span className="day-item">Seg</span>
-                  <span className="day-item">Ter</span>
-                  <span className="day-item">Qua</span>
-                  <span className="day-item">Qui</span>
-                  <span className="day-item">Sex</span>
-                </div>
 
               </div>
 
@@ -820,11 +1157,139 @@ export default function GestaoDeSala() {
                 <h3>Permissões de uso</h3>
 
                 <p className="light-text">
-                  As permissões de utilização da sala
-                  serão configuradas aqui.
+                  Defina quais perfis podem utilizar esta sala.
                 </p>
 
+                {carregandoPermissoes && (
+                  <p className="light-text">
+                    Carregando permissões...
+                  </p>
+                )}
+
+                {erroPermissoes && (
+                  <p className="erro-salas">
+                    {erroPermissoes}
+                  </p>
+                )}
+
+                <div className="permissao-item">
+                  <div>
+                    <strong>Professores</strong>
+                    <p className="light-text">
+                      Podem visualizar a sala e solicitar reservas.
+                    </p>
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    checked={permissoes.professor}
+                    disabled={carregandoPermissoes || salvandoPermissoes}
+                    onChange={(e) =>
+                      atualizarPermissao(
+                        'professor',
+                        e.target.checked
+                      )
+                    }
+                  />
+                </div>
+
+                <div className="permissao-item">
+                  <div>
+                    <strong>Gestores</strong>
+                    <p className="light-text">
+                      Podem administrar informações e recursos da sala.
+                    </p>
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    checked={permissoes.gestor}
+                    disabled={carregandoPermissoes || salvandoPermissoes}
+                    onChange={(e) =>
+                      atualizarPermissao(
+                        'gestor',
+                        e.target.checked
+                      )
+                    }
+                  />
+                </div>
+
               </div>
+
+              <div className="info-section">
+
+                <h3>Controle de reservas</h3>
+
+                <div className="permissao-item">
+                  <div>
+                    <strong>Permitir novas reservas</strong>
+                    <p className="light-text">
+                      Autoriza novas solicitações de reserva.
+                    </p>
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    checked={permissoes.permitirReservas}
+                    disabled={carregandoPermissoes || salvandoPermissoes}
+                    onChange={(e) =>
+                      atualizarPermissao(
+                        'permitirReservas',
+                        e.target.checked
+                      )
+                    }
+                  />
+                </div>
+
+                <div className="permissao-item">
+                  <div>
+                    <strong>Acesso restrito</strong>
+                    <p className="light-text">
+                      Restringe o uso aos perfis autorizados.
+                    </p>
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    checked={permissoes.acessoRestrito}
+                    disabled={carregandoPermissoes || salvandoPermissoes}
+                    onChange={(e) =>
+                      atualizarPermissao(
+                        'acessoRestrito',
+                        e.target.checked
+                      )
+                    }
+                  />
+                </div>
+
+              </div>
+
+              {mensagemPermissoes && (
+                <p className="mensagem-recurso-sucesso">
+                  {mensagemPermissoes}
+                </p>
+              )}
+
+              {erroPermissoes && (
+                <p className="erro-salas">
+                  {erroPermissoes}
+                </p>
+              )}
+
+              <button
+                type="button"
+                className="btn-salvar-alteracoes"
+                onClick={salvarPermissoes}
+                disabled={
+                  carregandoPermissoes ||
+                  salvandoPermissoes ||
+                  !salaSelecionada
+                }
+              >
+                {salvandoPermissoes
+                  ? 'Salvando...'
+                  : 'Salvar permissões'}
+              </button>
 
             </div>
           )}
@@ -838,14 +1303,258 @@ export default function GestaoDeSala() {
 
               <div className="info-section">
 
-                <h3>Configurações da sala</h3>
+                <h3>Informações da sala</h3>
 
-                <p className="light-text">
-                  As configurações da sala
-                  serão disponibilizadas aqui.
-                </p>
+                <div className="campo-configuracao">
+                  <label htmlFor="nomeSalaConfig">
+                    Nome da sala
+                  </label>
+
+                  <input
+                    id="nomeSalaConfig"
+                    type="text"
+                    value={configuracoes.nome}
+                    onChange={(e) =>
+                      atualizarConfiguracao('nome', e.target.value)
+                    }
+                  />
+                </div>
+
+                <div className="campo-configuracao">
+                  <label htmlFor="capacidadeSalaConfig">
+                    Capacidade máxima
+                  </label>
+
+                  <input
+                    id="capacidadeSalaConfig"
+                    type="number"
+                    min="1"
+                    value={configuracoes.capacidade}
+                    onChange={(e) =>
+                      atualizarConfiguracao(
+                        'capacidade',
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+
+                <div className="campo-configuracao">
+                  <label htmlFor="descricaoSalaConfig">
+                    Descrição
+                  </label>
+
+                  <textarea
+                    id="descricaoSalaConfig"
+                    rows="3"
+                    value={configuracoes.descricao}
+                    onChange={(e) =>
+                      atualizarConfiguracao(
+                        'descricao',
+                        e.target.value
+                      )
+                    }
+                    placeholder="Descreva as características da sala..."
+                  />
+                </div>
+
+                <div className="campo-configuracao">
+                  <label htmlFor="statusSalaConfig">
+                    Status da sala
+                  </label>
+
+                  <select
+                    id="statusSalaConfig"
+                    value={configuracoes.status}
+                    onChange={(e) =>
+                      atualizarConfiguracao('status', e.target.value)
+                    }
+                  >
+                    <option value="Ativa">Ativa</option>
+                    <option value="Inativa">Inativa</option>
+                  </select>
+                </div>
 
               </div>
+
+              <div className="info-section">
+
+                <h3>Regras de reserva</h3>
+
+                <div className="campo-configuracao">
+                  <label htmlFor="antecedenciaMinima">
+                    Antecedência mínima (dias)
+                  </label>
+
+                  <input
+                    id="antecedenciaMinima"
+                    type="number"
+                    min="0"
+                    value={configuracoes.antecedenciaMinima}
+                    onChange={(e) =>
+                      atualizarConfiguracao(
+                        'antecedenciaMinima',
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+
+                <div className="campo-configuracao">
+                  <label htmlFor="duracaoMaxima">
+                    Duração máxima da reserva (horas)
+                  </label>
+
+                  <input
+                    id="duracaoMaxima"
+                    type="number"
+                    min="1"
+                    value={configuracoes.duracaoMaxima}
+                    onChange={(e) =>
+                      atualizarConfiguracao(
+                        'duracaoMaxima',
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+
+                <div className="permissao-item">
+                  <div>
+                    <strong>Permitir reservas recorrentes</strong>
+                    <p className="light-text">
+                      Permite reservar a sala em vários dias.
+                    </p>
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    checked={configuracoes.reservasRecorrentes}
+                    onChange={(e) =>
+                      atualizarConfiguracao(
+                        'reservasRecorrentes',
+                        e.target.checked
+                      )
+                    }
+                  />
+                </div>
+
+                <div className="permissao-item">
+                  <div>
+                    <strong>Permitir cancelamento</strong>
+                    <p className="light-text">
+                      Permite cancelar reservas realizadas.
+                    </p>
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    checked={configuracoes.permitirCancelamento}
+                    onChange={(e) =>
+                      atualizarConfiguracao(
+                        'permitirCancelamento',
+                        e.target.checked
+                      )
+                    }
+                  />
+                </div>
+
+                <div className="campo-configuracao">
+                  <label htmlFor="prazoCancelamento">
+                    Prazo para cancelamento (dias antes)
+                  </label>
+
+                  <input
+                    id="prazoCancelamento"
+                    type="number"
+                    min="0"
+                    value={configuracoes.prazoCancelamento}
+                    onChange={(e) =>
+                      atualizarConfiguracao(
+                        'prazoCancelamento',
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+
+              </div>
+
+              <div className="info-section">
+
+                <h3>Manutenção da sala</h3>
+
+                <div className="permissao-item">
+                  <div>
+                    <strong>Colocar sala em manutenção</strong>
+                    <p className="light-text">
+                      Bloqueia temporariamente novas reservas.
+                    </p>
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    checked={configuracoes.manutencao}
+                    onChange={(e) =>
+                      atualizarConfiguracao(
+                        'manutencao',
+                        e.target.checked
+                      )
+                    }
+                  />
+                </div>
+
+                {configuracoes.manutencao && (
+                  <div className="campo-configuracao">
+                    <label htmlFor="motivoManutencao">
+                      Motivo da manutenção
+                    </label>
+
+                    <textarea
+                      id="motivoManutencao"
+                      rows="3"
+                      value={configuracoes.motivoManutencao}
+                      onChange={(e) =>
+                        atualizarConfiguracao(
+                          'motivoManutencao',
+                          e.target.value
+                        )
+                      }
+                      placeholder="Informe o motivo da manutenção..."
+                    />
+                  </div>
+                )}
+
+              </div>
+
+              {/* MENSAGEM DE SUCESSO */}
+              {mensagemConfiguracoes && (
+                <p className="mensagem-recurso-sucesso">
+                  {mensagemConfiguracoes}
+                </p>
+              )}
+
+              {/* MENSAGEM DE ERRO */}
+              {erroConfiguracoes && (
+                <p className="erro-salas">
+                  {erroConfiguracoes}
+                </p>
+              )}
+
+              {/* BOTÃO SALVAR CONFIGURAÇÕES */}
+              <button
+                type="button"
+                className="btn-salvar-alteracoes"
+                onClick={salvarConfiguracoes}
+                disabled={
+                  salvandoConfiguracoes ||
+                  !salaSelecionada
+                }
+              >
+                {salvandoConfiguracoes
+                  ? 'Salvando...'
+                  : 'Salvar configurações'}
+              </button>
 
             </div>
           )}
@@ -978,7 +1687,6 @@ export default function GestaoDeSala() {
               </p>
             )}
 
-            {/* CAMPO DE QUANTIDADE */}
             <div
               className="campo-quantidade-recurso"
               style={{ marginTop: '16px' }}

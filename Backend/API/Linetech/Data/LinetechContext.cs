@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Linetech.Models;
 
 namespace Linetech.Data
@@ -19,6 +18,8 @@ namespace Linetech.Data
 		public DbSet<Reserva> Reservas { get; set; }
 		public DbSet<Atividade> Atividades { get; set; }
 		public DbSet<SolicitacaoAcesso> SolicitacoesAcesso { get; set; }
+		public DbSet<ConfiguracaoSala> ConfiguracoesSalas { get; set; }
+		public DbSet<PermissaoSala> PermissoesSalas { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -177,6 +178,83 @@ namespace Linetech.Data
 					.HasForeignKey(sr => sr.RecursoId)
 					.OnDelete(DeleteBehavior.NoAction)
 					.HasConstraintName("FK_SalaRecursos_Recursos");
+			});
+
+			// Configurações individuais de cada sala
+			modelBuilder.Entity<ConfiguracaoSala>(entity =>
+			{
+				entity.ToTable("ConfiguracoesSala");
+
+				entity.HasKey(c => c.SalaId)
+					.HasName("PK_ConfiguracoesSala");
+
+				entity.Property(c => c.AntecedenciaMinima)
+					.IsRequired()
+					.HasDefaultValue(1);
+
+				entity.Property(c => c.DuracaoMaxima)
+					.IsRequired()
+					.HasDefaultValue(4);
+
+				entity.Property(c => c.ReservasRecorrentes)
+					.IsRequired()
+					.HasDefaultValue(false);
+
+				entity.Property(c => c.PermitirCancelamento)
+					.IsRequired()
+					.HasDefaultValue(true);
+
+				entity.Property(c => c.PrazoCancelamento)
+					.IsRequired()
+					.HasDefaultValue(2);
+
+				entity.Property(c => c.Manutencao)
+					.IsRequired()
+					.HasDefaultValue(false);
+
+				entity.Property(c => c.MotivoManutencao)
+					.HasMaxLength(500);
+
+				entity.Property(c => c.DataAtualizacao)
+					.IsRequired()
+					.HasDefaultValueSql("SYSDATETIME()");
+
+				entity.HasOne(c => c.Sala)
+					.WithMany()
+					.HasForeignKey(c => c.SalaId)
+					.OnDelete(DeleteBehavior.NoAction)
+					.HasConstraintName("FK_ConfiguracoesSala_Salas");
+			});
+
+			// Permissões individuais de cada sala
+			modelBuilder.Entity<PermissaoSala>(entity =>
+			{
+				entity.ToTable("PermissoesSala");
+
+				entity.HasKey(p => p.SalaId)
+					.HasName("PK_PermissoesSala");
+
+				entity.Property(p => p.Professor)
+					.IsRequired()
+					.HasDefaultValue(true);
+
+				entity.Property(p => p.Gestor)
+					.IsRequired()
+					.HasDefaultValue(true);
+
+				entity.Property(p => p.PermitirReservas)
+					.IsRequired()
+					.HasDefaultValue(true);
+
+				entity.Property(p => p.AcessoRestrito)
+					.IsRequired()
+					.HasDefaultValue(false);
+
+				entity.HasOne(p => p.Sala)
+					.WithMany()
+					.HasForeignKey(p => p.SalaId)
+					.OnDelete(DeleteBehavior.NoAction)
+					.HasConstraintName("FK_PermissoesSala_Salas");
 			});
 		}
 	}

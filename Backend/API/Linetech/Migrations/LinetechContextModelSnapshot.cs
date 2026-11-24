@@ -56,6 +56,56 @@ namespace Linetech.Migrations
                     b.ToTable("Atividades");
                 });
 
+            modelBuilder.Entity("Linetech.Models.ConfiguracaoSala", b =>
+                {
+                    b.Property<int>("SalaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AntecedenciaMinima")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<DateTime>("DataAtualizacao")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSDATETIME()");
+
+                    b.Property<int>("DuracaoMaxima")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(4);
+
+                    b.Property<bool>("Manutencao")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("MotivoManutencao")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("PermitirCancelamento")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("PrazoCancelamento")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(2);
+
+                    b.Property<bool>("ReservasRecorrentes")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.HasKey("SalaId")
+                        .HasName("PK_ConfiguracoesSala");
+
+                    b.ToTable("ConfiguracoesSala", (string)null);
+                });
+
             modelBuilder.Entity("Linetech.Models.Recurso", b =>
                 {
                     b.Property<int>("Id")
@@ -156,6 +206,11 @@ namespace Linetech.Migrations
 
                     b.Property<int>("RecursoId")
                         .HasColumnType("int");
+
+                    b.Property<int>("Quantidade")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.HasKey("SalaId", "RecursoId")
                         .HasName("PK_SalaRecursos");
@@ -271,6 +326,18 @@ namespace Linetech.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK_Atividades_Reservas");
+                });
+
+            modelBuilder.Entity("Linetech.Models.ConfiguracaoSala", b =>
+                {
+                    b.HasOne("Linetech.Models.Sala", "Sala")
+                        .WithMany()
+                        .HasForeignKey("SalaId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("FK_ConfiguracoesSala_Salas");
+
+                    b.Navigation("Sala");
                 });
 
             modelBuilder.Entity("Linetech.Models.Reserva", b =>

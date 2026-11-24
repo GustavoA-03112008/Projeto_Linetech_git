@@ -320,3 +320,134 @@ EXEC sp_helpindex 'dbo.SolicitacoesAcesso';
 ALTER TABLE SalaRecursos
 ADD Quantidade INT NOT NULL
     CONSTRAINT DF_SalaRecursos_Quantidade DEFAULT 1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+USE LinetechDB;
+GO
+
+-- ==========================================
+-- TABELA CONFIGURACOES SALA
+-- ==========================================
+
+IF OBJECT_ID('dbo.ConfiguracoesSala', 'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.ConfiguracoesSala
+    (
+        SalaId INT NOT NULL,
+
+        AntecedenciaMinima INT NOT NULL DEFAULT 1,
+        DuracaoMaxima INT NOT NULL DEFAULT 4,
+
+        ReservasRecorrentes BIT NOT NULL DEFAULT 0,
+        PermitirCancelamento BIT NOT NULL DEFAULT 1,
+        PrazoCancelamento INT NOT NULL DEFAULT 2,
+
+        Manutencao BIT NOT NULL DEFAULT 0,
+        MotivoManutencao NVARCHAR(500) NULL,
+
+        DataAtualizacao DATETIME2 NOT NULL
+            DEFAULT SYSDATETIME(),
+
+        CONSTRAINT PK_ConfiguracoesSala
+            PRIMARY KEY (SalaId),
+
+        CONSTRAINT FK_ConfiguracoesSala_Salas
+            FOREIGN KEY (SalaId)
+            REFERENCES dbo.Salas(Id),
+
+        CONSTRAINT CK_ConfiguracoesSala_Antecedencia
+            CHECK (AntecedenciaMinima >= 0),
+
+        CONSTRAINT CK_ConfiguracoesSala_Duracao
+            CHECK (DuracaoMaxima > 0),
+
+        CONSTRAINT CK_ConfiguracoesSala_Prazo
+            CHECK (PrazoCancelamento >= 0)
+    );
+END;
+GO
+
+-- Conferir a tabela criada
+SELECT *
+FROM dbo.ConfiguracoesSala;
+GO
+
+
+
+
+USE LinetechDB;
+GO
+
+SELECT Id, Nome, Email, Ativo
+FROM Usuarios
+WHERE Id = 1;
+
+
+USE LinetechDB;
+GO
+
+SELECT Id, Nome, Email, Ativo
+FROM Usuarios
+ORDER BY Id;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+USE LinetechDB;
+GO
+
+CREATE TABLE dbo.PermissoesSala
+(
+    SalaId INT NOT NULL PRIMARY KEY,
+
+    Professor BIT NOT NULL DEFAULT 1,
+
+    Gestor BIT NOT NULL DEFAULT 1,
+
+    PermitirReservas BIT NOT NULL DEFAULT 1,
+
+    AcessoRestrito BIT NOT NULL DEFAULT 0,
+
+    CONSTRAINT FK_PermissoesSala_Salas
+        FOREIGN KEY (SalaId)
+        REFERENCES dbo.Salas(Id)
+);
+GO
+
+
+USE LinetechDB;
+GO
+
+IF COL_LENGTH('dbo.Salas', 'Descricao') IS NULL
+BEGIN
+    ALTER TABLE dbo.Salas
+    ADD Descricao NVARCHAR(500) NULL;
+END;
+GO

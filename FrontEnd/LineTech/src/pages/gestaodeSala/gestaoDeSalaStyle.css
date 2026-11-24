@@ -867,3 +867,182 @@
     width: 100%;
   }
 }
+
+
+
+
+
+/* =========================================
+   CONFIGURAÇÕES E PERMISSÕES
+========================================= */
+
+.gestao-sala-page .info-section {
+  padding: 8px 0 25px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid #E1F0F5;
+}
+
+/* Títulos das seções */
+
+.gestao-sala-page .info-section h3 {
+  margin: 0 0 18px;
+  color: #0A4F68;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Campos de configuração */
+
+.gestao-sala-page .campo-configuracao {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.gestao-sala-page .campo-configuracao label {
+  color: #0D465C;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.gestao-sala-page .campo-configuracao input,
+.gestao-sala-page .campo-configuracao select,
+.gestao-sala-page .campo-configuracao textarea {
+  width: 100%;
+  max-width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #D8ECF2;
+  border-radius: 7px;
+  outline: none;
+  background: #FFFFFF;
+  color: #0D465C;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gestao-sala-page .campo-configuracao textarea {
+  min-height: 90px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.gestao-sala-page .campo-configuracao input:focus,
+.gestao-sala-page .campo-configuracao select:focus,
+.gestao-sala-page .campo-configuracao textarea:focus {
+  border-color: #1B89A8;
+  box-shadow: 0 0 0 3px rgba(27, 137, 168, 0.10);
+}
+
+.gestao-sala-page .campo-configuracao input::placeholder,
+.gestao-sala-page .campo-configuracao textarea::placeholder {
+  color: #9AAEB8;
+}
+
+/* Linhas de permissões e opções */
+
+.gestao-sala-page .permissao-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 17px;
+  margin-bottom: 12px;
+  background: #F4FBFD;
+  border: 1px solid #D8ECF2;
+  border-radius: 8px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.gestao-sala-page .permissao-item:hover {
+  background: #EDF8FB;
+  border-color: #B9DFE9;
+}
+
+.gestao-sala-page .permissao-item strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #0D465C;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.gestao-sala-page .permissao-item .light-text {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Checkbox */
+
+.gestao-sala-page .permissao-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  margin: 0;
+  accent-color: #1B89A8;
+  cursor: pointer;
+}
+
+/* Botão salvar nas abas */
+
+.gestao-sala-page .btn-salvar-alteracoes {
+  min-width: 175px;
+  padding: 12px 22px;
+  margin-top: 5px;
+  border: none;
+  border-radius: 7px;
+  background: #1B89A8;
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.gestao-sala-page .btn-salvar-alteracoes:hover {
+  background: #0A4F68;
+}
+
+.gestao-sala-page .btn-salvar-alteracoes:active {
+  transform: scale(0.98);
+}
+
+/* Separação visual das opções */
+
+.gestao-sala-page .info-section .permissao-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsividade */
+
+@media (max-width: 650px) {
+  .gestao-sala-page .info-section {
+    padding-bottom: 20px;
+    margin-bottom: 18px;
+  }
+
+  .gestao-sala-page .permissao-item {
+    gap: 12px;
+    padding: 13px;
+  }
+
+  .gestao-sala-page .permissao-item strong {
+    font-size: 12px;
+  }
+
+  .gestao-sala-page .permissao-item .light-text {
+    font-size: 11px;
+  }
+
+  .gestao-sala-page .campo-configuracao {
+    margin-bottom: 15px;
+  }
+
+  .gestao-sala-page .btn-salvar-alteracoes {
+    width: 100%;
+  }
+}
+  
