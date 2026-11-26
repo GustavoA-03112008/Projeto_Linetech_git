@@ -42,6 +42,36 @@ namespace Linetech.Controllers
 			return $"{Convert.ToBase64String(salt)}.{Convert.ToBase64String(hash)}";
 		}
 
+		// MÉTODO PARA VERIFICAR A SENHA
+		private static bool VerificarSenha(string senha, string senhaHash)
+		{
+			string[] partes = senhaHash.Split('.');
+
+			if (partes.Length != 2)
+				return false;
+
+			try
+			{
+				byte[] salt = Convert.FromBase64String(partes[0]);
+				byte[] hashArmazenado = Convert.FromBase64String(partes[1]);
+
+				byte[] hashInformado = Rfc2898DeriveBytes.Pbkdf2(
+					senha,
+					salt,
+					600000,
+					HashAlgorithmName.SHA256,
+					hashArmazenado.Length);
+
+				return CryptographicOperations.FixedTimeEquals(
+					hashInformado,
+					hashArmazenado);
+			}
+			catch (FormatException)
+			{
+				return false;
+			}
+		}
+
 		// CADASTRO PÚBLICO DE PROFESSOR
 		[HttpPost("cadastro")]
 		public async Task<IActionResult> Cadastrar(
@@ -255,6 +285,94 @@ namespace Linetech.Controllers
 				token = new JwtSecurityTokenHandler()
 					.WriteToken(token),
 
+				usuario = new
+				{
+					usuario.Id,
+					usuario.Nome,
+					usuario.Email,
+					usuario.Perfil
+				}
+			});
+		}
+
+		// EDITAR PERFIL DO USUÁRIO LOGADO
+		[Authorize]
+		[HttpPut("perfil")]
+		public async Task<IActionResult> EditarPerfil(
+			[FromBody] EditarPerfilRequest dados)
+		{
+			if (!int.TryParse(
+				User.FindFirstValue(ClaimTypes.NameIdentifier),
+				out int usuarioId))
+			{
+				return Unauthorized(new
+				{
+					mensagem = "Usuário não identificado."
+				});
+			}
+
+			if (string.IsNullOrWhiteSpace(dados.Nome) ||
+				string.IsNullOrWhiteSpace(dados.Email))
+			{
+				return BadRequest(new
+				{
+					mensagem = "Preencha o nome e o e-mail."
+				});
+			}
+
+			var usuario = await _context.Usuarios
+				.FirstOrDefaultAsync(u => u.Id == usuarioId && u.Ativo);
+
+			if (usuario == null)
+			{
+				return NotFound(new
+				{
+					mensagem = "Usuário não encontrado."
+				});
+			}
+
+			string email = dados.Email.Trim().ToLowerInvariant();
+
+			bool emailExiste = await _context.Usuarios.AnyAsync(u =>
+				u.Email == email && u.Id != usuarioId);
+
+			if (emailExiste)
+			{
+				return Conflict(new
+				{
+					mensagem = "Este e-mail já está cadastrado."
+				});
+			}
+
+			if (!VerificarSenha(dados.SenhaAtual, usuario.SenhaHash))
+			{
+				return BadRequest(new
+				{
+					mensagem = "A senha atual está incorreta."
+				});
+			}
+
+			if (!string.IsNullOrWhiteSpace(dados.NovaSenha))
+			{
+				if (dados.NovaSenha.Length < 6)
+				{
+					return BadRequest(new
+					{
+						mensagem = "A nova senha deve ter pelo menos 6 caracteres."
+					});
+				}
+
+				usuario.SenhaHash = GerarSenhaHash(dados.NovaSenha);
+			}
+
+			usuario.Nome = dados.Nome.Trim();
+			usuario.Email = email;
+
+			await _context.SaveChangesAsync();
+
+			return Ok(new
+			{
+				mensagem = "Perfil atualizado com sucesso.",
 				usuario = new
 				{
 					usuario.Id,

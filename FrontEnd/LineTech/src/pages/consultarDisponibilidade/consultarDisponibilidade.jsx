@@ -413,7 +413,7 @@ export default function ConsultarDisponibilidade() {
                 <div
                   className="room-card"
                   key={sala.id ?? sala.Id}
-                  onClick={() => navigate('/detalhes', {
+                  onClick={() => navigate('/detalhes-sala', {
                     state: { salaId: sala.id ?? sala.Id }
                   })}
                   style={{ cursor: 'pointer' }}

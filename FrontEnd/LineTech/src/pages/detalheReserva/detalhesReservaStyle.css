@@ -1,0 +1,155 @@
+
+.detalhes-reserva-page {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f5f8fa;
+}
+
+/* TÍTULO */
+.detalhes-reserva-titulo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.detalhes-reserva-titulo img {
+    cursor: pointer;
+}
+
+/* GRID */
+.detalhes-reserva-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 850px);
+    gap: 25px;
+}
+
+/* CARD PRINCIPAL */
+.reserva-info-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* CABEÇALHO */
+.reserva-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #e8eef2;
+}
+
+.reserva-image {
+    width: 75px;
+    height: 75px;
+    background-color: #eaf6fa;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reserva-header h2 {
+    color: #263d50;
+    font-size: 21px;
+    margin: 0 0 7px;
+}
+
+.reserva-header p {
+    color: #688596;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* STATUS */
+.reserva-status-section {
+    padding: 22px 0;
+    border-bottom: 1px solid #e8eef2;
+}
+
+.reserva-status-section h3,
+.reserva-info-section h3 {
+    color: #263d50;
+    font-size: 16px;
+    margin: 0 0 15px;
+}
+
+.reserva-status {
+    display: inline-block;
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.status-confirmada {
+    background-color: #e5f6eb;
+    color: #218838;
+}
+
+.status-pendente {
+    background-color: #fff4d6;
+    color: #a87900;
+}
+
+.status-cancelada {
+    background-color: #fde8e8;
+    color: #d32f2f;
+}
+
+/* INFORMAÇÕES */
+.reserva-info-section {
+    padding: 22px 0;
+    border-bottom: 1px solid #e8eef2;
+}
+
+.reserva-info-section:last-child {
+    border-bottom: none;
+}
+
+.reserva-info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f3f5;
+}
+
+.reserva-info-item:last-child {
+    border-bottom: none;
+}
+
+.reserva-info-item span {
+    color: #688596;
+    font-size: 14px;
+}
+
+.reserva-info-item strong {
+    color: #263d50;
+    font-size: 14px;
+    text-align: right;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+    .detalhes-reserva-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .reserva-info-card {
+        padding: 20px;
+    }
+
+    .reserva-info-item {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .reserva-info-item strong {
+        text-align: left;
+    }
+}

@@ -19,7 +19,8 @@ namespace Linetech.Controllers
 			_context = context;
 		}
 
-		// Listar todas as reservas
+		// Listar todas as reservas - somente Gestor
+		[Authorize(Roles = "Gestor")]
 		[HttpGet]
 		public async Task<IActionResult> ListarReservas()
 		{
@@ -36,14 +37,8 @@ namespace Linetech.Controllers
 		[HttpGet("minhas/proximas")]
 		public async Task<IActionResult> ListarMinhasProximasReservas()
 		{
-			var usuarioIdTexto = User.FindFirstValue(
-				ClaimTypes.NameIdentifier
-			);
-
-			if (!int.TryParse(usuarioIdTexto, out int usuarioId))
-			{
+			if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int usuarioId))
 				return Unauthorized("Usuário não identificado.");
-			}
 
 			var agora = DateTime.Now;
 
@@ -53,8 +48,7 @@ namespace Linetech.Controllers
 					on reserva.SalaId equals sala.Id
 				where reserva.UsuarioId == usuarioId
 					&& reserva.DataFim >= agora
-					&& (reserva.Status == "Pendente"
-						|| reserva.Status == "Confirmada")
+					&& (reserva.Status == "Pendente" || reserva.Status == "Confirmada")
 				orderby reserva.DataInicio ascending
 				select new
 				{
@@ -65,26 +59,18 @@ namespace Linetech.Controllers
 					reserva.Finalidade,
 					reserva.Status
 				}
-			)
-			.Take(3)
-			.ToListAsync();
+			).Take(3).ToListAsync();
 
 			return Ok(reservas);
 		}
 
-		// Listar todas as reservas do usuário logado
+		// Listar reservas do usuário logado
 		[Authorize]
 		[HttpGet("minhas")]
 		public async Task<IActionResult> ListarMinhasReservas()
 		{
-			var usuarioIdTexto = User.FindFirstValue(
-				ClaimTypes.NameIdentifier
-			);
-
-			if (!int.TryParse(usuarioIdTexto, out int usuarioId))
-			{
+			if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int usuarioId))
 				return Unauthorized("Usuário não identificado.");
-			}
 
 			var reservas = await (
 				from reserva in _context.Reservas.AsNoTracking()
@@ -110,6 +96,7 @@ namespace Linetech.Controllers
 		}
 
 		// Consultar uma reserva pelo ID
+		[Authorize]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> BuscarReserva(int id)
 		{
@@ -118,84 +105,61 @@ namespace Linetech.Controllers
 				.FirstOrDefaultAsync(r => r.Id == id);
 
 			if (reserva == null)
-			{
 				return NotFound("Reserva não encontrada.");
+
+			bool ehGestor = User.IsInRole("Gestor");
+
+			if (!ehGestor &&
+				(!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int usuarioId)
+				 || reserva.UsuarioId != usuarioId))
+			{
+				return Forbid();
 			}
 
 			return Ok(reserva);
 		}
 
 		// Cadastrar uma nova reserva
+		[Authorize]
 		[HttpPost]
 		public async Task<IActionResult> CadastrarReserva(
 			[FromBody] CadastrarReservaRequest dados)
 		{
-			if (dados.UsuarioId <= 0 || dados.SalaId <= 0)
-			{
-				return BadRequest(
-					"Informe um usuário e uma sala válidos."
-				);
-			}
+			if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int usuarioId))
+				return Unauthorized("Usuário não identificado.");
+
+			if (dados.SalaId <= 0)
+				return BadRequest("Informe uma sala válida.");
 
 			if (string.IsNullOrWhiteSpace(dados.Finalidade))
-			{
-				return BadRequest(
-					"Informe a finalidade da reserva."
-				);
-			}
+				return BadRequest("Informe a finalidade da reserva.");
 
 			if (dados.DataFim <= dados.DataInicio)
-			{
-				return BadRequest(
-					"A data final deve ser posterior à data inicial."
-				);
-			}
+				return BadRequest("A data final deve ser posterior à data inicial.");
 
 			var usuario = await _context.Usuarios
-				.FirstOrDefaultAsync(u =>
-					u.Id == dados.UsuarioId && u.Ativo);
+				.FirstOrDefaultAsync(u => u.Id == usuarioId && u.Ativo);
 
 			if (usuario == null)
-			{
-				return BadRequest(
-					"Usuário não encontrado ou inativo."
-				);
-			}
+				return Unauthorized("Usuário não encontrado ou inativo.");
 
 			var sala = await _context.Salas
-				.FirstOrDefaultAsync(s =>
-					s.Id == dados.SalaId && s.Disponivel);
+				.FirstOrDefaultAsync(s => s.Id == dados.SalaId && s.Disponivel);
 
 			if (sala == null)
-			{
-				return BadRequest(
-					"Sala não encontrada ou indisponível."
-				);
-			}
+				return BadRequest("Sala não encontrada ou indisponível.");
 
-			// Busca as configurações da sala
 			var configuracao = await _context.ConfiguracoesSalas
 				.FirstOrDefaultAsync(c => c.SalaId == dados.SalaId);
 
-			// Valores padrão caso não existam configurações
-			int antecedenciaMinima =
-				configuracao?.AntecedenciaMinima ?? 1;
+			int antecedenciaMinima = configuracao?.AntecedenciaMinima ?? 1;
+			int duracaoMaxima = configuracao?.DuracaoMaxima ?? 4;
 
-			int duracaoMaxima =
-				configuracao?.DuracaoMaxima ?? 4;
-
-			// Verifica se a sala está em manutenção
 			if (configuracao?.Manutencao == true)
-			{
-				return BadRequest(
-					"Não é possível reservar esta sala, pois ela está em manutenção."
-				);
-			}
+				return BadRequest("Não é possível reservar esta sala, pois ela está em manutenção.");
 
-			// Verifica a antecedência mínima em dias
 			var agora = DateTime.Now;
 
-			// Normaliza a data recebida para comparação com o horário local
 			var dataInicio = dados.DataInicio.Kind == DateTimeKind.Utc
 				? dados.DataInicio.ToLocalTime()
 				: dados.DataInicio;
@@ -203,41 +167,23 @@ namespace Linetech.Controllers
 			var dataLimite = agora.AddDays(antecedenciaMinima);
 
 			if (dataInicio < dataLimite)
-			{
-				return BadRequest(
-					$"A reserva deve ser realizada com pelo menos {antecedenciaMinima} dia(s) de antecedência."
-				);
-			}
+				return BadRequest($"A reserva deve ser realizada com pelo menos {antecedenciaMinima} dia(s) de antecedência.");
 
-			// Verifica a duração máxima em horas
-			if (dados.DataFim >
-				dados.DataInicio.AddHours(duracaoMaxima))
-			{
-				return BadRequest(
-					$"A duração máxima permitida para esta sala é de {duracaoMaxima} hora(s)."
-				);
-			}
+			if (dados.DataFim > dados.DataInicio.AddHours(duracaoMaxima))
+				return BadRequest($"A duração máxima permitida para esta sala é de {duracaoMaxima} hora(s).");
 
-			// Verifica conflitos com outras reservas
 			bool conflito = await _context.Reservas.AnyAsync(r =>
 				r.SalaId == dados.SalaId &&
-				(r.Status == "Pendente" ||
-				 r.Status == "Confirmada") &&
+				(r.Status == "Pendente" || r.Status == "Confirmada") &&
 				dados.DataInicio < r.DataFim &&
 				dados.DataFim > r.DataInicio);
 
 			if (conflito)
-			{
-				return Conflict(new
-				{
-					mensagem =
-						"A sala já possui uma reserva nesse período."
-				});
-			}
+				return Conflict(new { mensagem = "A sala já possui uma reserva nesse período." });
 
 			var reserva = new Reserva
 			{
-				UsuarioId = dados.UsuarioId,
+				UsuarioId = usuarioId,
 				SalaId = dados.SalaId,
 				DataInicio = dados.DataInicio,
 				DataFim = dados.DataFim,
@@ -249,14 +195,11 @@ namespace Linetech.Controllers
 			_context.Reservas.Add(reserva);
 			await _context.SaveChangesAsync();
 
-			return CreatedAtAction(
-				nameof(BuscarReserva),
-				new { id = reserva.Id },
-				reserva
-			);
+			return CreatedAtAction(nameof(BuscarReserva), new { id = reserva.Id }, reserva);
 		}
 
-		// Editar uma reserva existente
+		// Editar uma reserva - somente Gestor
+		[Authorize(Roles = "Gestor")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> EditarReserva(
 			int id,
@@ -265,127 +208,71 @@ namespace Linetech.Controllers
 			var reserva = await _context.Reservas.FindAsync(id);
 
 			if (reserva == null)
-			{
 				return NotFound("Reserva não encontrada.");
-			}
 
 			if (dados.UsuarioId <= 0 || dados.SalaId <= 0)
-			{
-				return BadRequest(
-					"Informe um usuário e uma sala válidos."
-				);
-			}
+				return BadRequest("Informe um usuário e uma sala válidos.");
 
 			if (string.IsNullOrWhiteSpace(dados.Finalidade))
-			{
-				return BadRequest(
-					"Informe a finalidade da reserva."
-				);
-			}
+				return BadRequest("Informe a finalidade da reserva.");
 
 			if (dados.DataFim <= dados.DataInicio)
-			{
-				return BadRequest(
-					"A data final deve ser posterior à data inicial."
-				);
-			}
+				return BadRequest("A data final deve ser posterior à data inicial.");
 
 			var usuario = await _context.Usuarios
-				.FirstOrDefaultAsync(u =>
-					u.Id == dados.UsuarioId && u.Ativo);
+				.FirstOrDefaultAsync(u => u.Id == dados.UsuarioId && u.Ativo);
 
 			if (usuario == null)
-			{
-				return BadRequest(
-					"Usuário não encontrado ou inativo."
-				);
-			}
+				return BadRequest("Usuário não encontrado ou inativo.");
 
 			var sala = await _context.Salas
-				.FirstOrDefaultAsync(s =>
-					s.Id == dados.SalaId && s.Disponivel);
+				.FirstOrDefaultAsync(s => s.Id == dados.SalaId && s.Disponivel);
 
 			if (sala == null)
-			{
-				return BadRequest(
-					"Sala não encontrada ou indisponível."
-				);
-			}
+				return BadRequest("Sala não encontrada ou indisponível.");
 
 			var statusPermitidos = new[]
 			{
 				"Pendente",
 				"Confirmada",
 				"Cancelada",
+				"Recusada",
 				"Concluida"
 			};
 
 			if (!statusPermitidos.Contains(dados.Status))
-			{
 				return BadRequest("Status inválido.");
-			}
 
-			// Busca as configurações da sala
 			var configuracao = await _context.ConfiguracoesSalas
 				.FirstOrDefaultAsync(c => c.SalaId == dados.SalaId);
 
-			int antecedenciaMinima =
-				configuracao?.AntecedenciaMinima ?? 1;
+			int antecedenciaMinima = configuracao?.AntecedenciaMinima ?? 1;
+			int duracaoMaxima = configuracao?.DuracaoMaxima ?? 4;
 
-			int duracaoMaxima =
-				configuracao?.DuracaoMaxima ?? 4;
-
-			// Aplica as regras somente para reservas ativas
-			if (dados.Status == "Pendente" ||
-				dados.Status == "Confirmada")
+			if (dados.Status == "Pendente" || dados.Status == "Confirmada")
 			{
 				if (configuracao?.Manutencao == true)
-				{
-					return BadRequest(
-						"Não é possível reservar esta sala, pois ela está em manutenção."
-					);
-				}
+					return BadRequest("Não é possível reservar esta sala, pois ela está em manutenção.");
 
-				// Verifica a antecedência mínima em dias
-				var dataLimite =
-					DateTime.Now.AddDays(antecedenciaMinima);
+				var dataLimite = DateTime.Now.AddDays(antecedenciaMinima);
 
 				if (dados.DataInicio < dataLimite)
-				{
-					return BadRequest(
-						$"A reserva deve ser realizada com pelo menos {antecedenciaMinima} dia(s) de antecedência."
-					);
-				}
+					return BadRequest($"A reserva deve ser realizada com pelo menos {antecedenciaMinima} dia(s) de antecedência.");
 
-				// Verifica a duração máxima em horas
-				if (dados.DataFim >
-					dados.DataInicio.AddHours(duracaoMaxima))
-				{
-					return BadRequest(
-						$"A duração máxima permitida para esta sala é de {duracaoMaxima} hora(s)."
-					);
-				}
+				if (dados.DataFim > dados.DataInicio.AddHours(duracaoMaxima))
+					return BadRequest($"A duração máxima permitida para esta sala é de {duracaoMaxima} hora(s).");
 			}
 
-			// Verifica conflitos com outras reservas
 			bool conflito = await _context.Reservas.AnyAsync(r =>
 				r.Id != id &&
 				r.SalaId == dados.SalaId &&
-				(r.Status == "Pendente" ||
-				 r.Status == "Confirmada") &&
-				(dados.Status == "Pendente" ||
-				 dados.Status == "Confirmada") &&
+				(r.Status == "Pendente" || r.Status == "Confirmada") &&
+				(dados.Status == "Pendente" || dados.Status == "Confirmada") &&
 				dados.DataInicio < r.DataFim &&
 				dados.DataFim > r.DataInicio);
 
 			if (conflito)
-			{
-				return Conflict(new
-				{
-					mensagem =
-						"A sala já possui uma reserva nesse período."
-				});
-			}
+				return Conflict(new { mensagem = "A sala já possui uma reserva nesse período." });
 
 			reserva.UsuarioId = dados.UsuarioId;
 			reserva.SalaId = dados.SalaId;
@@ -399,57 +286,131 @@ namespace Linetech.Controllers
 			return Ok(reserva);
 		}
 
-		// Cancelar uma reserva
+		// Aprovar solicitação - somente Gestor
+		[Authorize(Roles = "Gestor")]
+		[HttpPost("{id}/aprovar")]
+		public async Task<IActionResult> AprovarReserva(int id)
+		{
+			var reserva = await _context.Reservas.FindAsync(id);
+
+			if (reserva == null)
+				return NotFound("Solicitação não encontrada.");
+
+			if (reserva.Status != "Pendente")
+				return BadRequest("Somente solicitações pendentes podem ser aprovadas.");
+
+			var conflito = await _context.Reservas.AnyAsync(r =>
+				r.Id != id &&
+				r.SalaId == reserva.SalaId &&
+				r.Status == "Confirmada" &&
+				reserva.DataInicio < r.DataFim &&
+				reserva.DataFim > r.DataInicio);
+
+			if (conflito)
+				return Conflict(new { mensagem = "Já existe uma reserva confirmada nesse período." });
+
+			reserva.Status = "Confirmada";
+
+			// Criar notificação de aprovação
+			var notificacao = new Notificacao
+			{
+				UsuarioId = reserva.UsuarioId,
+				Titulo = "Reserva aprovada",
+				Mensagem = "Sua solicitação de reserva foi aprovada com sucesso.",
+				Tipo = "ReservaAprovada",
+				ReservaId = reserva.Id,
+				SalaId = reserva.SalaId,
+				Lida = false,
+				DataCriacao = DateTime.Now
+			};
+
+			_context.Notificacoes.Add(notificacao);
+
+			await _context.SaveChangesAsync();
+
+			return Ok(new
+			{
+				mensagem = "Solicitação aprovada com sucesso.",
+				reserva
+			});
+		}
+
+		// Recusar solicitação - somente Gestor
+		[Authorize(Roles = "Gestor")]
+		[HttpPatch("{id}/recusar")]
+		public async Task<IActionResult> RecusarReserva(int id)
+		{
+			var reserva = await _context.Reservas.FindAsync(id);
+
+			if (reserva == null)
+				return NotFound("Solicitação não encontrada.");
+
+			if (reserva.Status != "Pendente")
+				return BadRequest("Somente solicitações pendentes podem ser recusadas.");
+
+			reserva.Status = "Recusada";
+
+			// Criar notificação de recusa
+			var notificacao = new Notificacao
+			{
+				UsuarioId = reserva.UsuarioId,
+				Titulo = "Reserva recusada",
+				Mensagem = "Sua solicitação de reserva foi recusada.",
+				Tipo = "ReservaRecusada",
+				ReservaId = reserva.Id,
+				SalaId = reserva.SalaId,
+				Lida = false,
+				DataCriacao = DateTime.Now
+			};
+
+			_context.Notificacoes.Add(notificacao);
+
+			await _context.SaveChangesAsync();
+
+			return Ok(new
+			{
+				mensagem = "Solicitação recusada com sucesso.",
+				reserva
+			});
+		}
+
+		// Cancelar reserva - dono da reserva ou Gestor
+		[Authorize]
 		[HttpPatch("{id}/cancelar")]
 		public async Task<IActionResult> CancelarReserva(int id)
 		{
 			var reserva = await _context.Reservas.FindAsync(id);
 
 			if (reserva == null)
-			{
 				return NotFound("Reserva não encontrada.");
+
+			bool ehGestor = User.IsInRole("Gestor");
+
+			if (!ehGestor &&
+				(!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int usuarioId)
+				 || reserva.UsuarioId != usuarioId))
+			{
+				return Forbid();
 			}
 
-			if (reserva.Status == "Cancelada")
-			{
-				return BadRequest(
-					"Esta reserva já está cancelada."
-				);
-			}
+			if (reserva.Status == "Cancelada" || reserva.Status == "Recusada")
+				return BadRequest("Esta reserva já está cancelada ou recusada.");
 
 			if (reserva.Status == "Concluida")
-			{
-				return BadRequest(
-					"Não é possível cancelar uma reserva concluída."
-				);
-			}
+				return BadRequest("Não é possível cancelar uma reserva concluída.");
 
-			// Busca as configurações da sala
 			var configuracao = await _context.ConfiguracoesSalas
 				.FirstOrDefaultAsync(c => c.SalaId == reserva.SalaId);
 
-			// Verifica se o cancelamento está permitido
 			if (configuracao?.PermitirCancelamento == false)
-			{
-				return BadRequest(
-					"O cancelamento de reservas não está permitido para esta sala."
-				);
-			}
+				return BadRequest("O cancelamento de reservas não está permitido para esta sala.");
 
-			// Verifica o prazo mínimo de cancelamento
-			int prazoCancelamento =
-				configuracao?.PrazoCancelamento ?? 2;
+			int prazoCancelamento = configuracao?.PrazoCancelamento ?? 2;
 
-			var prazoLimite = reserva.DataInicio.AddDays(
-				-prazoCancelamento
-			);
+			var prazoLimite = reserva.DataInicio.AddDays(-prazoCancelamento);
 
 			if (DateTime.Now > prazoLimite)
-			{
-				return BadRequest(
-					$"O cancelamento deve ser realizado com pelo menos {prazoCancelamento} dia(s) de antecedência."
-				);
-			}
+				return BadRequest($"O cancelamento deve ser realizado com pelo menos {prazoCancelamento} dia(s) de antecedência.");
 
 			reserva.Status = "Cancelada";
 
@@ -459,6 +420,29 @@ namespace Linetech.Controllers
 			{
 				mensagem = "Reserva cancelada com sucesso.",
 				reserva
+			});
+		}
+
+		// Excluir solicitação recusada ou cancelada - somente Gestor
+		[Authorize(Roles = "Gestor")]
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> ExcluirReservaRecusada(int id)
+		{
+			var reserva = await _context.Reservas.FindAsync(id);
+
+			if (reserva == null)
+				return NotFound("Solicitação não encontrada.");
+
+			if (reserva.Status != "Recusada" && reserva.Status != "Cancelada")
+				return BadRequest("Somente solicitações recusadas ou canceladas podem ser excluídas.");
+
+			_context.Reservas.Remove(reserva);
+
+			await _context.SaveChangesAsync();
+
+			return Ok(new
+			{
+				mensagem = "Solicitação excluída com sucesso."
 			});
 		}
 	}

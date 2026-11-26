@@ -1,0 +1,193 @@
+
+.notificacoes-page .notificacoes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.notificacoes-page .notificacoes-header .welcome-subtitle {
+  margin-bottom: 0;
+}
+
+.notificacoes-page .btn-marcar-todas {
+  background-color: #e4f6fb;
+  color: #0a526d;
+  border: 1px solid #1b89a8;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.notificacoes-page .btn-marcar-todas:hover {
+  background-color: #1b89a8;
+  color: #ffffff;
+}
+
+/* Abas de Filtro */
+.notificacoes-page .notificacoes-filtros {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.notificacoes-page .filtro-tab {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid #d3e6ed;
+  background-color: #ffffff;
+  color: #688596;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.notificacoes-page .filtro-tab:hover {
+  border-color: #1b89a8;
+  color: #0a526d;
+}
+
+.notificacoes-page .filtro-tab.ativo {
+  background-color: #1b89a8;
+  color: #ffffff;
+  border-color: #1b89a8;
+}
+
+/* Lista e Cards de Notificação */
+.notificacoes-page .reservas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notificacoes-page .notificacao-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background-color: #ffffff;
+  border: 1px solid #d5eef5;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 8px rgba(10, 82, 109, 0.04);
+  transition: all 0.2s ease;
+}
+
+.notificacoes-page .notificacao-item:hover {
+  border-color: #1b89a8;
+  box-shadow: 0 4px 12px rgba(10, 82, 109, 0.08);
+}
+
+.notificacoes-page .notificacao-item.nao-lida {
+  background-color: #f0f9fc;
+  border-left: 4px solid #1b89a8;
+}
+
+.notificacoes-page .reserva-info-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.notificacoes-page .reserva-icon-bg {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background-color: #e4f6fb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notificacoes-page .reserva-text h4 {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0a526d;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notificacoes-page .reserva-text p {
+  margin: 0;
+  font-size: 13.5px;
+  color: #46687a;
+  line-height: 1.45;
+}
+
+.notificacoes-page .notificacao-badge-nova {
+  display: inline-block;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+  background-color: #1b89a8;
+  border-radius: 999px;
+}
+
+.notificacoes-page .notificacao-tempo {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #7d99a8;
+}
+
+.notificacoes-page .btn-remover-notificacao {
+  background: none;
+  border: none;
+  color: #87a1af;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.notificacoes-page .btn-remover-notificacao:hover {
+  background-color: #fee2e2;
+  color: #d32f2f;
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  .notificacoes-page .notificacoes-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .notificacoes-page .btn-marcar-todas {
+    width: 100%;
+  }
+
+  .notificacoes-page .notificacao-item {
+    padding: 14px;
+    gap: 8px;
+  }
+
+  .notificacoes-page .reserva-info-left {
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .notificacoes-page .reserva-text {
+    min-width: 0;
+  }
+
+  .notificacoes-page .reserva-text h4 {
+    flex-wrap: wrap;
+  }
+
+  .notificacoes-page .reserva-text p {
+    overflow-wrap: anywhere;
+  }
+}

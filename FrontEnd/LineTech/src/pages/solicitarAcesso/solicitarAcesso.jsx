@@ -7,6 +7,23 @@ import './solicitarAcessoStyle.css';
 export default function SolicitarAcesso() {
     const navigate = useNavigate();
 
+    // VERIFICAR PERFIL DO USUÁRIO
+    const usuario = JSON.parse(
+        localStorage.getItem('usuario') || '{}'
+    );
+
+    const perfil = String(
+        usuario.perfil ?? usuario.Perfil ?? ''
+    ).trim().toLowerCase();
+
+    const ehGestor = perfil === 'gestor';
+
+    useEffect(() => {
+        if (!ehGestor) {
+            navigate('/inicio', { replace: true });
+        }
+    }, [ehGestor, navigate]);
+
     const [activeTab, setActiveTab] = useState('pendentes');
 
     const [reservas, setReservas] = useState([]);
@@ -19,8 +36,10 @@ export default function SolicitarAcesso() {
     const [mensagem, setMensagem] = useState('');
     const [processando, setProcessando] = useState(null);
 
-    // Carregar reservas, salas e usuários da API
+    // CARREGAR RESERVAS, SALAS E USUÁRIOS DA API
     useEffect(() => {
+        if (!ehGestor) return;
+
         async function carregarSolicitacoes() {
             try {
                 setCarregando(true);
@@ -45,9 +64,14 @@ export default function SolicitarAcesso() {
         }
 
         carregarSolicitacoes();
-    }, []);
+    }, [ehGestor]);
 
-    // Formatar data e horário
+    // IMPEDIR A RENDERIZAÇÃO PARA QUEM NÃO É GESTOR
+    if (!ehGestor) {
+        return null;
+    }
+
+    // FORMATAR DATA E HORÁRIO
     function formatarDataHora(data) {
         if (!data) return '';
 
@@ -66,41 +90,50 @@ export default function SolicitarAcesso() {
         );
     }
 
-    // Encontrar sala e usuário relacionados à reserva
+    // ENCONTRAR SALA E USUÁRIO RELACIONADOS À RESERVA
     function obterDadosReserva(reserva) {
-        const sala = salas.find(item => item.id === reserva.salaId);
-        const usuario = usuarios.find(item => item.id === reserva.usuarioId);
+        const salaId = reserva.salaId ?? reserva.SalaId;
+        const usuarioId = reserva.usuarioId ?? reserva.UsuarioId;
+
+        const sala = salas.find(
+            item => Number(item.id ?? item.Id) === Number(salaId)
+        );
+
+        const usuarioReserva = usuarios.find(
+            item => Number(item.id ?? item.Id) === Number(usuarioId)
+        );
 
         return {
-            nomeSala: sala?.nome || `Sala ${reserva.salaId}`,
-            nomeUsuario: usuario?.nome || `Usuário ${reserva.usuarioId}`,
-            perfilUsuario: usuario?.perfil || ''
+            nomeSala: sala?.nome ?? sala?.Nome ?? `Sala ${salaId}`,
+            nomeUsuario: usuarioReserva?.nome ?? usuarioReserva?.Nome ?? `Usuário ${usuarioId}`,
+            perfilUsuario: usuarioReserva?.perfil ?? usuarioReserva?.Perfil ?? ''
         };
     }
 
-    // Aprovar uma solicitação
+    // APROVAR UMA SOLICITAÇÃO
     async function handleAprovar(reserva) {
+        const reservaId = reserva.id ?? reserva.Id;
+
         try {
             setErro('');
             setMensagem('');
-            setProcessando(reserva.id);
+            setProcessando(reservaId);
 
-            await apiRequest(`/api/Reservas/${reserva.id}`, {
-                method: 'PUT',
-                body: JSON.stringify({
-                    usuarioId: reserva.usuarioId,
-                    salaId: reserva.salaId,
-                    dataInicio: reserva.dataInicio,
-                    dataFim: reserva.dataFim,
-                    finalidade: reserva.finalidade,
-                    status: 'Confirmada'
-                })
-            });
+            await apiRequest(
+                `/api/Reservas/${reservaId}/aprovar`,
+                {
+                    method: 'POST'
+                }
+            );
 
             setReservas(prev =>
                 prev.map(item =>
-                    item.id === reserva.id
-                        ? { ...item, status: 'Confirmada' }
+                    Number(item.id ?? item.Id) === Number(reservaId)
+                        ? {
+                            ...item,
+                            status: 'Confirmada',
+                            Status: 'Confirmada'
+                        }
                         : item
                 )
             );
@@ -114,22 +147,39 @@ export default function SolicitarAcesso() {
         }
     }
 
-    // Recusar uma solicitação
+    // RECUSAR UMA SOLICITAÇÃO
     async function handleRecusar(reserva) {
+        const reservaId = reserva.id ?? reserva.Id;
+
+        const statusAtual = String(
+            reserva.status ?? reserva.Status ?? ''
+        ).trim().toLowerCase();
+
+        if (statusAtual !== 'pendente') {
+            setErro('Somente solicitações pendentes podem ser recusadas.');
+            return;
+        }
+
         try {
             setErro('');
             setMensagem('');
-            setProcessando(reserva.id);
+            setProcessando(reservaId);
 
             await apiRequest(
-                `/api/Reservas/${reserva.id}/cancelar`,
-                { method: 'PATCH' }
+                `/api/Reservas/${reservaId}/recusar`,
+                {
+                    method: 'PATCH'
+                }
             );
 
             setReservas(prev =>
                 prev.map(item =>
-                    item.id === reserva.id
-                        ? { ...item, status: 'Cancelada' }
+                    Number(item.id ?? item.Id) === Number(reservaId)
+                        ? {
+                            ...item,
+                            status: 'Recusada',
+                            Status: 'Recusada'
+                        }
                         : item
                 )
             );
@@ -143,25 +193,55 @@ export default function SolicitarAcesso() {
         }
     }
 
-    // Excluir somente da lista exibida
-    function handleExcluir(reserva) {
+    // EXCLUIR UMA SOLICITAÇÃO RECUSADA OU CANCELADA
+    async function handleExcluir(reserva) {
+        const reservaId = reserva.id ?? reserva.Id;
+
+        const statusAtual = String(
+            reserva.status ?? reserva.Status ?? ''
+        ).trim().toLowerCase();
+
+        if (statusAtual !== 'recusada' && statusAtual !== 'cancelada') {
+            setErro('Somente solicitações recusadas ou canceladas podem ser excluídas.');
+            return;
+        }
+
         const confirmar = window.confirm(
-            'Tem certeza de que deseja remover esta solicitação da lista?'
+            'Tem certeza que deseja excluir esta solicitação? Esta ação não poderá ser desfeita.'
         );
 
         if (!confirmar) return;
 
-        setReservas(prev =>
-            prev.filter(item => item.id !== reserva.id)
-        );
+        try {
+            setErro('');
+            setMensagem('');
+            setProcessando(reservaId);
 
-        setMensagem('Solicitação removida da lista com sucesso!');
-        setErro('');
+            await apiRequest(`/api/Reservas/${reservaId}`, {
+                method: 'DELETE'
+            });
+
+            setReservas(prev =>
+                prev.filter(
+                    item =>
+                        Number(item.id ?? item.Id) !== Number(reservaId)
+                )
+            );
+
+            setMensagem('Solicitação excluída com sucesso!');
+
+        } catch (error) {
+            setErro(error.message || 'Não foi possível excluir a solicitação.');
+        } finally {
+            setProcessando(null);
+        }
     }
 
-    // Filtrar reservas de acordo com a aba selecionada
+    // FILTRAR RESERVAS DE ACORDO COM A ABA SELECIONADA
     const reservasFiltradas = reservas.filter(reserva => {
-        const status = (reserva.status || '').toLowerCase();
+        const status = String(
+            reserva.status ?? reserva.Status ?? ''
+        ).trim().toLowerCase();
 
         if (activeTab === 'pendentes') {
             return status === 'pendente';
@@ -178,9 +258,10 @@ export default function SolicitarAcesso() {
         return false;
     });
 
-    // Contar solicitações pendentes
+    // CONTAR SOLICITAÇÕES PENDENTES
     const totalPendentes = reservas.filter(
-        reserva => (reserva.status || '').toLowerCase() === 'pendente'
+        reserva =>
+            String(reserva.status ?? reserva.Status ?? '').toLowerCase() === 'pendente'
     ).length;
 
     return (
@@ -310,7 +391,7 @@ export default function SolicitarAcesso() {
                                 alt="Usuário"
                             />
 
-                            Prof. Carlos
+                            {usuario.nome || usuario.Nome || 'Usuário'}
 
                             <span style={{ fontSize: '9px', marginLeft: '3px' }}>
                                 ▼
@@ -428,12 +509,23 @@ export default function SolicitarAcesso() {
 
                         {!carregando && reservasFiltradas.map(reserva => {
                             const dados = obterDadosReserva(reserva);
-                            const estaProcessando = processando === reserva.id;
+                            const reservaId = reserva.id ?? reserva.Id;
+
+                            const estaProcessando =
+                                Number(processando) === Number(reservaId);
+
+                            const statusAtual = String(
+                                reserva.status ?? reserva.Status ?? ''
+                            ).trim().toLowerCase();
+
+                            const podeExcluir =
+                                statusAtual === 'recusada' ||
+                                statusAtual === 'cancelada';
 
                             return (
                                 <div
                                     className="request-card-item"
-                                    key={reserva.id}
+                                    key={reservaId}
                                 >
 
                                     <div className="request-card-header">
@@ -469,11 +561,11 @@ export default function SolicitarAcesso() {
                                                     alt="Data"
                                                 />
 
-                                                {formatarDataHora(reserva.dataInicio)}
+                                                {formatarDataHora(reserva.dataInicio ?? reserva.DataInicio)}
 
                                                 {' até '}
 
-                                                {new Date(reserva.dataFim).toLocaleTimeString('pt-BR', {
+                                                {new Date(reserva.dataFim ?? reserva.DataFim).toLocaleTimeString('pt-BR', {
                                                     hour: '2-digit',
                                                     minute: '2-digit',
                                                     timeZone: 'UTC'
@@ -487,26 +579,27 @@ export default function SolicitarAcesso() {
                                                     src="https://img.icons8.com/material-outlined/24/1b89a8/user-group-man-man.png"
                                                     alt="Motivo"
                                                 />
-                                                {reserva.finalidade}
+                                                {reserva.finalidade ?? reserva.Finalidade}
                                             </div>
 
                                             <div className="info-row">
                                                 <strong>Status:</strong>
                                                 {' '}
-                                                {reserva.status}
+                                                {reserva.status ?? reserva.Status}
                                             </div>
 
                                         </div>
 
+                                        {/* BOTÃO PARA ABRIR OS DETALHES */}
                                         <div
                                             className="arrow-link"
                                             onClick={() => navigate('/detalhes', {
                                                 state: {
-                                                    salaId: reserva.salaId,
-                                                    reservaId: reserva.id
+                                                    reserva: reserva
                                                 }
                                             })}
                                             style={{ cursor: 'pointer' }}
+                                            title="Ver detalhes"
                                         >
                                             {'>'}
                                         </div>
@@ -516,7 +609,6 @@ export default function SolicitarAcesso() {
                                     {/* AÇÕES DAS SOLICITAÇÕES */}
                                     <div className="card-action-buttons">
 
-                                        {/* APROVAR E RECUSAR SOMENTE EM PENDENTES */}
                                         {activeTab === 'pendentes' && (
                                             <>
                                                 <button
@@ -541,16 +633,24 @@ export default function SolicitarAcesso() {
                                             </>
                                         )}
 
-                                        {/* X PARA EXCLUIR NAS TRÊS ABAS */}
+                                        {/* X HABILITADO SOMENTE NA ABA RECUSADAS */}
                                         <button
                                             className="btn-excluir"
                                             type="button"
-                                            disabled={processando !== null}
+                                            disabled={
+                                                processando !== null ||
+                                                activeTab !== 'recusadas' ||
+                                                !podeExcluir
+                                            }
                                             onClick={() => handleExcluir(reserva)}
-                                            title="Excluir solicitação"
+                                            title={
+                                                activeTab === 'recusadas'
+                                                    ? 'Excluir solicitação'
+                                                    : 'Disponível somente na aba Recusadas'
+                                            }
                                             aria-label="Excluir solicitação"
                                         >
-                                            X
+                                            {estaProcessando ? '...' : 'X'}
                                         </button>
 
                                     </div>
@@ -561,16 +661,7 @@ export default function SolicitarAcesso() {
 
                     </div>
 
-                    {/* RODAPÉ */}
-                    <p className="account-footer-text">
-                        Não tem uma conta?{' '}
-                        <span
-                            onClick={() => navigate('/detalhes')}
-                            style={{ cursor: 'pointer' }}
-                        >
-                            Solicitar acesso
-                        </span>
-                    </p>
+                   
 
                 </div>
             </main>

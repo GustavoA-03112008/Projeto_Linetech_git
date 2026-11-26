@@ -1,13 +1,21 @@
 
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { apiRequest } from '../../services/api';
 import './historicoReservaStyle.css';
 
 export default function HistoricoReserva() {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [filtro, setFiltro] = useState('Todas');
+  // Recuperar dados do usuário logado
+  const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+  const nomeUsuario = usuario.nome || usuario.Nome || 'Usuário';
+
+  const [filtro, setFiltro] = useState(
+    location.state?.filtro || 'Todas'
+  );
+
   const [reservas, setReservas] = useState([]);
   const [minhasReservas, setMinhasReservas] = useState([]);
   const [salas, setSalas] = useState([]);
@@ -207,7 +215,8 @@ export default function HistoricoReserva() {
                 alt="Usuário"
               />
 
-              Prof. Carlos
+              {nomeUsuario}
+
               <span style={{ fontSize: '9px', marginLeft: '3px' }}>
                 ▼
               </span>

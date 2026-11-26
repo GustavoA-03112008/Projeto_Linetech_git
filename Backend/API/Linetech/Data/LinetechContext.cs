@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using Linetech.Models;
 
 namespace Linetech.Data
@@ -20,6 +21,7 @@ namespace Linetech.Data
 		public DbSet<SolicitacaoAcesso> SolicitacoesAcesso { get; set; }
 		public DbSet<ConfiguracaoSala> ConfiguracoesSalas { get; set; }
 		public DbSet<PermissaoSala> PermissoesSalas { get; set; }
+		public DbSet<Notificacao> Notificacoes { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -255,6 +257,55 @@ namespace Linetech.Data
 					.HasForeignKey(p => p.SalaId)
 					.OnDelete(DeleteBehavior.NoAction)
 					.HasConstraintName("FK_PermissoesSala_Salas");
+			});
+
+			// Notificações
+			modelBuilder.Entity<Notificacao>(entity =>
+			{
+				entity.ToTable("Notificacoes");
+
+				entity.HasKey(n => n.Id);
+
+				entity.Property(n => n.Titulo)
+					.HasMaxLength(150)
+					.IsRequired();
+
+				entity.Property(n => n.Mensagem)
+					.HasMaxLength(500)
+					.IsRequired();
+
+				entity.Property(n => n.Tipo)
+					.HasMaxLength(50)
+					.IsRequired();
+
+				entity.Property(n => n.Lida)
+					.IsRequired()
+					.HasDefaultValue(false);
+
+				entity.Property(n => n.DataCriacao)
+					.IsRequired()
+					.HasDefaultValueSql("SYSDATETIME()");
+
+				entity.HasOne<Usuario>()
+					.WithMany()
+					.HasForeignKey(n => n.UsuarioId)
+					.OnDelete(DeleteBehavior.NoAction)
+					.HasConstraintName("FK_Notificacoes_Usuarios");
+
+				entity.HasOne<Reserva>()
+					.WithMany()
+					.HasForeignKey(n => n.ReservaId)
+					.OnDelete(DeleteBehavior.NoAction)
+					.HasConstraintName("FK_Notificacoes_Reservas");
+
+				entity.HasOne<Sala>()
+					.WithMany()
+					.HasForeignKey(n => n.SalaId)
+					.OnDelete(DeleteBehavior.NoAction)
+					.HasConstraintName("FK_Notificacoes_Salas");
+
+				entity.HasIndex(n => new { n.UsuarioId, n.DataCriacao })
+					.HasDatabaseName("IX_Notificacoes_UsuarioId");
 			});
 		}
 	}

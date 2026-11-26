@@ -451,3 +451,102 @@ BEGIN
     ADD Descricao NVARCHAR(500) NULL;
 END;
 GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+USE LinetechDB;
+GO
+
+-- ==========================================
+-- TABELA NOTIFICACOES
+-- ==========================================
+
+IF OBJECT_ID('dbo.Notificacoes', 'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Notificacoes
+    (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+
+        UsuarioId INT NOT NULL,
+
+        Titulo NVARCHAR(150) NOT NULL,
+
+        Mensagem NVARCHAR(500) NOT NULL,
+
+        Tipo NVARCHAR(50) NOT NULL,
+
+        ReservaId INT NULL,
+
+        SalaId INT NULL,
+
+        Lida BIT NOT NULL DEFAULT 0,
+
+        DataCriacao DATETIME2 NOT NULL
+            DEFAULT SYSDATETIME(),
+
+        CONSTRAINT FK_Notificacoes_Usuarios
+            FOREIGN KEY (UsuarioId)
+            REFERENCES dbo.Usuarios(Id),
+
+        CONSTRAINT FK_Notificacoes_Reservas
+            FOREIGN KEY (ReservaId)
+            REFERENCES dbo.Reservas(Id),
+
+        CONSTRAINT FK_Notificacoes_Salas
+            FOREIGN KEY (SalaId)
+            REFERENCES dbo.Salas(Id)
+    );
+END;
+GO
+
+-- ==========================================
+-- INDICE PARA BUSCAR NOTIFICACOES DO USUARIO
+-- ==========================================
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.indexes
+    WHERE name = 'IX_Notificacoes_UsuarioId'
+      AND object_id = OBJECT_ID('dbo.Notificacoes')
+)
+BEGIN
+    CREATE INDEX IX_Notificacoes_UsuarioId
+        ON dbo.Notificacoes(UsuarioId, DataCriacao);
+END;
+GO
+
+-- ==========================================
+-- CONFERIR A TABELA
+-- ==========================================
+
+SELECT *
+FROM dbo.Notificacoes;
+GO

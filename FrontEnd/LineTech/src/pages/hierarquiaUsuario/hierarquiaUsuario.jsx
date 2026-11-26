@@ -4,7 +4,7 @@ import './hierarquiaUsuarioStyle.css';
 
 const niveisAcesso = [
   {
-    cargo: 'Administrador',
+    cargo: 'Gestor',
     descricao: 'Acesso total ao sistema.',
   },
   {
