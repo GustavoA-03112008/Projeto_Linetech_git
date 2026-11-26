@@ -1,5 +1,4 @@
-﻿
-namespace Linetech.Models
+﻿namespace Linetech.Models
 {
 	public class CadastrarSalaRequest
 	{
@@ -8,5 +7,7 @@ namespace Linetech.Models
 		public int Capacidade { get; set; }
 
 		public bool Disponivel { get; set; } = true;
+
+		public string? Descricao { get; set; }
 	}
 }

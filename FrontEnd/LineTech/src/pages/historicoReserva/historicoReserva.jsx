@@ -1,51 +1,99 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './historicoReservaStyle.css';
 
-const reservas = [
-  {
-    id: 1,
-    sala: 'Sala 1.34',
-    dataHora: '08/10/2026 - 08:00 - 10:00',
-    atividade: 'Aula de Desenvolvimento',
-    categoria: 'Salas',
-  },
-  {
-    id: 2,
-    sala: 'Sala de reunião',
-    dataHora: '06/10/2026 - 14:00 - 16:00',
-    atividade: 'Reunião de equipe',
-    categoria: 'Minhas',
-  },
-  {
-    id: 3,
-    sala: 'Lab. Informática',
-    dataHora: '01/10/2026 - 10:00 - 12:00',
-    atividade: 'Aula Prática',
-    categoria: 'Outros',
-  },
-  {
-    id: 4,
-    sala: 'Sala 1.35',
-    dataHora: '28/09/2026 - 15:00 - 17:00',
-    atividade: 'Sala de Estudos',
-    categoria: 'Salas',
-  },
-];
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { apiRequest } from '../../services/api';
+import './historicoReservaStyle.css';
 
 export default function HistoricoReserva() {
   const navigate = useNavigate();
-  const [filtro, setFiltro] = useState('Todas');
 
-  const listaFiltrada = reservas.filter((reserva) => {
-    if (filtro === 'Minhas') {
-      return reserva.categoria === 'Minhas' || reserva.id === 1;
+  const [filtro, setFiltro] = useState('Todas');
+  const [reservas, setReservas] = useState([]);
+  const [minhasReservas, setMinhasReservas] = useState([]);
+  const [salas, setSalas] = useState([]);
+  const [salaSelecionada, setSalaSelecionada] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState('');
+
+  // CARREGAR RESERVAS, MINHAS RESERVAS E SALAS DA API
+  useEffect(() => {
+    async function carregarDados() {
+      try {
+        setCarregando(true);
+        setErro('');
+
+        const [reservasData, minhasData, salasData] = await Promise.all([
+          apiRequest('/api/Reservas'),
+          apiRequest('/api/Reservas/minhas'),
+          apiRequest('/api/Salas'),
+        ]);
+
+        setReservas(Array.isArray(reservasData) ? reservasData : []);
+        setMinhasReservas(Array.isArray(minhasData) ? minhasData : []);
+        setSalas(Array.isArray(salasData) ? salasData : []);
+
+      } catch (error) {
+        setErro(error.message || 'Não foi possível carregar o histórico.');
+      } finally {
+        setCarregando(false);
+      }
     }
-    if (filtro === 'Salas') {
-      return reserva.sala.toLowerCase().includes('sala');
-    }
-    return true;
-  });
+
+    carregarDados();
+  }, []);
+
+  // ALTERAR ABA E LIMPAR SALA SELECIONADA
+  function alterarFiltro(aba) {
+    setFiltro(aba);
+    setSalaSelecionada(null);
+  }
+
+  // DEFINIR AS RESERVAS EXIBIDAS
+  const reservasExibidas =
+    filtro === 'Minhas' ? minhasReservas : reservas;
+
+  // RELACIONAR RESERVAS COM OS NOMES DAS SALAS
+  const listaFiltrada = reservasExibidas
+    .map((reserva) => {
+      const sala = salas.find(
+        (item) => item.id === reserva.salaId
+      );
+
+      return {
+        ...reserva,
+        nomeSala: reserva.nomeSala || sala?.nome || `Sala ${reserva.salaId}`,
+      };
+    })
+    .sort(
+      (a, b) =>
+        new Date(b.dataInicio) - new Date(a.dataInicio)
+    );
+
+  // CONTAR RESERVAS DE CADA SALA
+  const salasComQuantidade = salas.map((sala) => ({
+    ...sala,
+    quantidadeReservas: reservas.filter(
+      (reserva) => reserva.salaId === sala.id
+    ).length,
+  }));
+
+  // FILTRAR RESERVAS DA SALA SELECIONADA
+  const reservasDaSala = listaFiltrada.filter(
+    (reserva) => reserva.salaId === salaSelecionada?.id
+  );
+
+  // FORMATAR DATA
+  function formatarData(data) {
+    return new Date(data).toLocaleDateString('pt-BR');
+  }
+
+  // FORMATAR HORÁRIO
+  function formatarHora(data) {
+    return new Date(data).toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
 
   return (
     <div className="historico-reserva-page dashboard-container">
@@ -53,26 +101,62 @@ export default function HistoricoReserva() {
       {/* BARRA LATERAL (SIDEBAR) */}
       <aside className="sidebar">
         <div className="sidebar-menu">
+
           <div className="menu-item" onClick={() => navigate('/inicio')}>
-            <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/688596/home--v2.png" alt="Início" />
+            <img
+              className="menu-icon"
+              width="22"
+              height="22"
+              src="https://img.icons8.com/material-outlined/24/688596/home--v2.png"
+              alt="Início"
+            />
             Início
           </div>
+
           <div className="menu-item active" onClick={() => navigate('/historico')}>
-            <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/1b89a8/calendar--v1.png" alt="Reservas" />
+            <img
+              className="menu-icon"
+              width="22"
+              height="22"
+              src="https://img.icons8.com/material-outlined/24/1b89a8/calendar--v1.png"
+              alt="Reservas"
+            />
             Reservas
           </div>
+
           <div className="menu-item" onClick={() => navigate('/consultar')}>
-            <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/688596/door.png" alt="Salas" />
+            <img
+              className="menu-icon"
+              width="22"
+              height="22"
+              src="https://img.icons8.com/material-outlined/24/688596/door.png"
+              alt="Salas"
+            />
             Salas
           </div>
+
           <div className="menu-item" onClick={() => navigate('/solicitacoes')}>
-            <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/688596/document--v1.png" alt="Solicitações" />
+            <img
+              className="menu-icon"
+              width="22"
+              height="22"
+              src="https://img.icons8.com/material-outlined/24/688596/document--v1.png"
+              alt="Solicitações"
+            />
             Solicitações
           </div>
+
           <div className="menu-item" onClick={() => navigate('/perfil')}>
-            <img className="menu-icon" width="22" height="22" src="https://img.icons8.com/material-outlined/24/688596/user--v1.png" alt="Perfil" />
+            <img
+              className="menu-icon"
+              width="22"
+              height="22"
+              src="https://img.icons8.com/material-outlined/24/688596/user--v1.png"
+              alt="Perfil"
+            />
             Perfil
           </div>
+
         </div>
       </aside>
 
@@ -81,19 +165,54 @@ export default function HistoricoReserva() {
 
         {/* BARRA SUPERIOR (TOPBAR) */}
         <header className="topbar">
+
           <div className="search-container">
-            <img width="20" height="20" src="https://img.icons8.com/material-outlined/24/1b89a8/search--v1.png" alt="Buscar" />
-            <input type="text" className="search-input" placeholder="Buscar salas, atividades..." />
+            <img
+              width="20"
+              height="20"
+              src="https://img.icons8.com/material-outlined/24/1b89a8/search--v1.png"
+              alt="Buscar"
+            />
+
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Buscar salas, atividades..."
+            />
           </div>
 
           <div className="topbar-actions">
-            <div className="notification-icon" onClick={() => navigate('/notificacoes')}>
-              <img width="22" height="22" style={{ cursor: 'pointer' }} src="https://img.icons8.com/material-outlined/24/1b89a8/appointment-reminders.png" alt="Notificações" />
+
+            <div
+              className="notification-icon"
+              onClick={() => navigate('/notificacoes')}
+            >
+              <img
+                width="22"
+                height="22"
+                style={{ cursor: 'pointer' }}
+                src="https://img.icons8.com/material-outlined/24/1b89a8/appointment-reminders.png"
+                alt="Notificações"
+              />
             </div>
-            <div className="profile-section" onClick={() => navigate('/perfil')}>
-              <img width="28" height="28" src="https://img.icons8.com/material-rounded/28/1b89a8/user-male-circle.png" alt="Usuário" />
-              Prof. Carlos <span style={{ fontSize: '9px', marginLeft: '3px' }}>▼</span>
+
+            <div
+              className="profile-section"
+              onClick={() => navigate('/perfil')}
+            >
+              <img
+                width="28"
+                height="28"
+                src="https://img.icons8.com/material-rounded/28/1b89a8/user-male-circle.png"
+                alt="Usuário"
+              />
+
+              Prof. Carlos
+              <span style={{ fontSize: '9px', marginLeft: '3px' }}>
+                ▼
+              </span>
             </div>
+
           </div>
         </header>
 
@@ -101,16 +220,34 @@ export default function HistoricoReserva() {
         <div className="dashboard-content">
 
           {/* TÍTULO COM BOTÃO VOLTAR */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              marginBottom: '20px',
+            }}
+          >
             <img
               width="24"
               height="24"
               src="https://img.icons8.com/material-outlined/24/1b89a8/back--v1.png"
               alt="Voltar"
               style={{ cursor: 'pointer' }}
-              onClick={() => navigate(-1)}
+              onClick={() => {
+                if (filtro === 'Salas' && salaSelecionada) {
+                  setSalaSelecionada(null);
+                } else {
+                  navigate(-1);
+                }
+              }}
             />
-            <h1 className="page-title" style={{ margin: 0 }}>Histórico das reservas</h1>
+
+            <h1 className="page-title" style={{ margin: 0 }}>
+              {filtro === 'Salas' && salaSelecionada
+                ? salaSelecionada.nome
+                : 'Histórico das reservas'}
+            </h1>
           </div>
 
           {/* ABAS DE FILTRO */}
@@ -120,42 +257,150 @@ export default function HistoricoReserva() {
                 key={aba}
                 type="button"
                 className={`tab-button ${filtro === aba ? 'active' : ''}`}
-                onClick={() => setFiltro(aba)}
+                onClick={() => alterarFiltro(aba)}
               >
                 {aba}
               </button>
             ))}
           </div>
 
-          {/* LISTA DE RESERVAS */}
-          <div className="reservas-list">
-            {listaFiltrada.map((item) => (
-              <div
-                className="reserva-card-item"
-                key={item.id}
-                onClick={() => navigate('/detalhes')}
-              >
-                <div className="reserva-card-left">
-                  <div className="reserva-icon-box">
-                    <img width="24" height="24" src="https://img.icons8.com/material-outlined/24/1b89a8/calendar--v1.png" alt="Calendário" />
+          {/* CONTEÚDO DA ABA SALAS */}
+          {filtro === 'Salas' && !salaSelecionada && (
+            <div className="reservas-list">
+
+              {!carregando && salasComQuantidade.map((sala) => (
+                <div
+                  className="reserva-card-item"
+                  key={sala.id}
+                  onClick={() => setSalaSelecionada(sala)}
+                >
+
+                  <div className="reserva-card-left">
+
+                    <div className="reserva-icon-box">
+                      <img
+                        width="24"
+                        height="24"
+                        src="https://img.icons8.com/material-outlined/24/1b89a8/door.png"
+                        alt="Sala"
+                      />
+                    </div>
+
+                    <div className="reserva-card-info">
+
+                      <h2>{sala.nome}</h2>
+
+                      <p className="reserva-data">
+                        {sala.quantidadeReservas}{' '}
+                        {sala.quantidadeReservas === 1
+                          ? 'reserva registrada'
+                          : 'reservas registradas'}
+                      </p>
+
+                    </div>
                   </div>
-                  <div className="reserva-card-info">
-                    <h2>{item.sala}</h2>
-                    <p className="reserva-data">{item.dataHora}</p>
-                    <p className="reserva-atividade">{item.atividade}</p>
+
+                  <div className="arrow-icon">
+                    {'>'}
                   </div>
+
                 </div>
+              ))}
 
-                <div className="arrow-icon">{'>'}</div>
-              </div>
-            ))}
+              {!carregando && !erro && salasComQuantidade.length === 0 && (
+                <div className="empty-message">
+                  Nenhuma sala cadastrada.
+                </div>
+              )}
 
-            {listaFiltrada.length === 0 && (
-              <div className="empty-message">
-                Nenhuma reserva encontrada.
-              </div>
-            )}
-          </div>
+            </div>
+          )}
+
+          {/* CONTEÚDO DAS ABAS TODAS E MINHAS OU RESERVAS DA SALA */}
+          {(filtro !== 'Salas' || salaSelecionada) && (
+            <div className="reservas-list">
+
+              {salaSelecionada && (
+                <p style={{ marginBottom: '15px', color: '#688596' }}>
+                  Reservas realizadas nesta sala
+                </p>
+              )}
+
+              {carregando && (
+                <div className="empty-message">
+                  Carregando reservas...
+                </div>
+              )}
+
+              {!carregando && erro && (
+                <div className="empty-message">
+                  {erro}
+                </div>
+              )}
+
+              {!carregando && !erro && (
+                (salaSelecionada ? reservasDaSala : listaFiltrada).map((item) => (
+                  <div
+                    className="reserva-card-item"
+                    key={item.id}
+                    onClick={() =>
+                      navigate('/detalhes', {
+                        state: { reserva: item },
+                      })
+                    }
+                  >
+
+                    <div className="reserva-card-left">
+
+                      <div className="reserva-icon-box">
+                        <img
+                          width="24"
+                          height="24"
+                          src="https://img.icons8.com/material-outlined/24/1b89a8/calendar--v1.png"
+                          alt="Calendário"
+                        />
+                      </div>
+
+                      <div className="reserva-card-info">
+
+                        <h2>{item.nomeSala}</h2>
+
+                        <p className="reserva-data">
+                          {formatarData(item.dataInicio)}
+                          {' - '}
+                          {formatarHora(item.dataInicio)}
+                          {' - '}
+                          {formatarHora(item.dataFim)}
+                        </p>
+
+                        <p className="reserva-atividade">
+                          {item.finalidade}
+                        </p>
+
+                        <p className="reserva-data">
+                          Status: {item.status}
+                        </p>
+
+                      </div>
+                    </div>
+
+                    <div className="arrow-icon">
+                      {'>'}
+                    </div>
+
+                  </div>
+                ))
+              )}
+
+              {!carregando && !erro &&
+                (salaSelecionada ? reservasDaSala : listaFiltrada).length === 0 && (
+                  <div className="empty-message">
+                    Nenhuma reserva encontrada.
+                  </div>
+                )}
+
+            </div>
+          )}
 
         </div>
       </main>

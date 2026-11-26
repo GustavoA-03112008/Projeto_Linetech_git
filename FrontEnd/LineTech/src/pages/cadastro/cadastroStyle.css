@@ -1,226 +1,256 @@
-/* Importação da fonte Inter */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-/* ==============================================================
-   1. CONFIGURAÇÕES GERAIS E CENTRALIZAÇÃO TOTAL
-   ============================================================== */
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #ECFEFF !important;
-  overflow-x: hidden;
-}
-
 .cadastro-container {
   min-height: 100vh;
-  width: 100vw;
-  background-color: #ECFEFF !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-/* CARTÃO EMPILHADO (VERTICAL) CENTRALIZADO */
-.cadastro-card {
   width: 100%;
-  max-width: 460px; /* Largura ideal para formulário único */
-  background-color: #ECFEFF !important;
-  border: 1.5px solid #a5e3f0 !important;
-  border-radius: 24px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  padding: 40px 30px;
+  background-color: #eef8fb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
   box-sizing: border-box;
-  box-shadow: 0 8px 24px rgba(27, 137, 168, 0.06);
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* ==============================================================
-   2. IDENTIDADE VISUAL (TOPO)
-   ============================================================== */
+.cadastro-wrapper {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+}
 
-.cadastro-apresentacao {
+/* Título simples acima do card */
+.cadastro-topo {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.cadastro-topo-texto {
+  display: block;
+  font-size: 19px;
+  font-weight: 700;
+  color: #084266;
+}
+
+/* Card branco */
+.cadastro-card {
+  background-color: #ffffff;
+  border: 1px solid #d5eef5;
+  border-radius: 16px;
+  padding: 32px 32px 28px;
+  box-shadow: 0 4px 20px rgba(8, 66, 102, 0.04);
+}
+
+.cadastro-titulo {
+  margin: 0 0 6px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #083b5c;
+}
+
+.cadastro-subtitulo {
+  margin: 0 0 22px 0;
+  font-size: 13.5px;
+  color: #5b798a;
+}
+
+/* Tipo de usuário */
+.perfil-section {
+  margin-bottom: 18px;
+}
+
+.perfil-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #083b5c;
+  margin-bottom: 2px;
+}
+
+.perfil-descricao {
+  display: block;
+  font-size: 12px;
+  color: #6c8999;
+  margin-bottom: 12px;
+}
+
+.perfil-opcoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.perfil-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  margin-bottom: 28px; /* Espaçamento entre o topo e o formulário */
-  width: 100%;
-}
-
-.cadastro-logo {
-  width: 110px;
-  height: auto;
-  max-height: 75px;
-  object-fit: contain;
-  margin-bottom: 8px;
-}
-
-.cadastro-apresentacao h1 {
-  font-size: 32px;
-  color: #071A2B;
-  margin: 0;
-  font-weight: 800;
-}
-
-.cadastro-apresentacao h2 {
-  font-size: 20px;
-  color: #071A2B;
-  margin: 2px 0 6px 0;
-  font-weight: 700;
-}
-
-.cadastro-apresentacao p {
-  font-size: 14px;
-  color: #56899F;
-  line-height: 1.4;
-  margin: 0;
-}
-
-/* ==============================================================
-   3. FORMULÁRIO (ABAIXO)
-   ============================================================== */
-
-.cadastro-form-area {
-  width: 100%;
-}
-
-.cadastro-titulo {
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.cadastro-titulo h2 {
-  font-size: 24px;
-  color: #071A2B;
-  margin: 0 0 4px;
-  font-weight: 800;
-}
-
-.cadastro-titulo p {
-  color: #56899F;
-  font-size: 13px;
-  margin: 0;
-}
-
-.cadastro-input {
-  width: 100% !important;
-  height: 50px !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 12px !important;
-  padding: 0 16px !important;
-  margin-bottom: 12px !important;
-  background-color: #ECFEFF !important;
-  border: 1.5px solid #a5e3f0 !important;
-  border-radius: 12px !important;
-  box-sizing: border-box !important;
-  transition: all 0.2s ease-in-out !important;
-}
-
-.cadastro-input:focus-within {
-  border-color: #1b89a8 !important;
-  background-color: #ECFEFF !important;
-}
-
-.cadastro-input input {
-  flex: 1 !important;
-  height: 100% !important;
-  border: none !important;
-  outline: none !important;
-  background: transparent !important;
-  color: #084b68 !important;
-  font-size: 14px !important;
-  box-shadow: none !important;
-}
-
-.cadastro-input input::placeholder {
-  color: #688596 !important;
-  opacity: 1 !important;
-}
-
-.cadastro-input input:-webkit-autofill,
-.cadastro-input input:-webkit-autofill:hover, 
-.cadastro-input input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 30px #ECFEFF inset !important;
-  -webkit-text-fill-color: #084b68 !important;
-}
-
-.cadastro-olho {
-  border: none !important;
-  background: transparent !important;
-  color: #1b89a8 !important;
+  padding: 16px 12px;
+  border-radius: 10px;
+  border: 1.5px solid #d8e9ef;
+  background-color: #ffffff;
   cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.perfil-card:hover {
+  border-color: #8cc9d9;
+}
+
+.perfil-card.ativo {
+  background-color: #e4f6fb;
+  border-color: #0088ab;
+}
+
+.radio-indicador {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid #b4ccd6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+}
+
+.perfil-card.ativo .radio-indicador {
+  border-color: #0088ab;
+}
+
+.radio-ponto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #0088ab;
+}
+
+.perfil-icone {
+  width: 30px;
+  height: 30px;
+  color: #0088ab;
+  margin-bottom: 6px;
+}
+
+.perfil-nome {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #083b5c;
+}
+
+/* Inputs */
+.cadastro-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cadastro-input-box {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #d3e6ed;
+  border-radius: 8px;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease;
+}
+
+.cadastro-input-box:focus-within {
+  border-color: #0088ab;
+}
+
+.campo-icone {
+  width: 18px;
+  height: 18px;
+  color: #46687a;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.cadastro-input-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #1f3b4d;
+  background: transparent;
+}
+
+.cadastro-input-box input::placeholder {
+  color: #93aab6;
+}
+
+.btn-olho {
+  background: none;
+  border: none;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  color: #46687a;
 }
 
-/* ==============================================================
-   4. BOTÕES E LINKS
-   ============================================================== */
-
-.cadastro-botao {
-  width: 100% !important;
-  height: 50px !important;
-  margin-top: 6px !important;
-  border: none !important;
-  border-radius: 12px !important;
-  background-color: #084b68 !important;
-  color: #FFFFFF !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  transition: background-color 0.2s ease !important;
+.btn-olho svg {
+  width: 18px;
+  height: 18px;
 }
 
-.cadastro-botao:hover {
-  background-color: #1b89a8 !important;
-}
-
-.cadastro-login {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin-top: 18px;
+/* Erro */
+.cadastro-erro {
+  color: #d32f2f;
   font-size: 13px;
-  color: #56899F;
+  margin: 2px 0 0 0;
+  text-align: center;
 }
 
-.cadastro-btn-entrar {
-  background: transparent !important;
-  border: none !important;
-  color: #1b89a8 !important;
-  font-weight: 700 !important;
-  font-size: 13px !important;
-  cursor: pointer !important;
-  padding: 0 !important;
-  text-decoration: none;
+/* Botão principal */
+.btn-cadastrar {
+  margin-top: 6px;
+  width: 100%;
+  height: 46px;
+  background-color: #0083a3;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.cadastro-btn-entrar:hover {
-  text-decoration: underline !important;
+.btn-cadastrar:hover {
+  background-color: #006c87;
 }
 
-/* Ícones do Icons8 */
-.icone-icons8 {
-  width: 20px !important;
-  height: 20px !important;
-  object-fit: contain !important;
-  flex-shrink: 0 !important;
+.btn-cadastrar:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Link inferior */
+.cadastro-rodape-link {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 13.5px;
+  color: #5b798a;
+}
+
+.cadastro-rodape-link span {
+  color: #0083a3;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cadastro-rodape-link span:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .cadastro-card {
+    padding: 24px 20px;
+  }
 }

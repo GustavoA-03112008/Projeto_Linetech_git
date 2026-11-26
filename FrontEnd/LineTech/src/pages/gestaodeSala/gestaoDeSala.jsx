@@ -246,7 +246,11 @@ export default function GestaoDeSala() {
       nome: salaAtual.nome ?? salaAtual.Nome ?? '',
       capacidade: String(
         salaAtual.capacidade ?? salaAtual.Capacidade ?? ''
-      )
+      ),
+      descricao: salaAtual.descricao ?? salaAtual.Descricao ?? '',
+      status: (salaAtual.disponivel ?? salaAtual.Disponivel ?? true)
+        ? 'Ativa'
+        : 'Inativa'
     }));
   }, [salaSelecionada]);
 
@@ -609,6 +613,28 @@ export default function GestaoDeSala() {
       configuracoes.prazoCancelamento
     );
 
+    const capacidadeSala = Number(
+      configuracoes.capacidade
+    );
+
+    if (!configuracoes.nome.trim()) {
+      setErroConfiguracoes(
+        'Informe o nome da sala.'
+      );
+      return;
+    }
+
+    if (
+      configuracoes.capacidade === '' ||
+      !Number.isInteger(capacidadeSala) ||
+      capacidadeSala <= 0
+    ) {
+      setErroConfiguracoes(
+        'Informe uma capacidade válida.'
+      );
+      return;
+    }
+
     if (
       configuracoes.antecedenciaMinima === '' ||
       !Number.isInteger(antecedenciaMinima) ||
@@ -657,6 +683,23 @@ export default function GestaoDeSala() {
       setErroConfiguracoes('');
       setMensagemConfiguracoes('');
 
+      await apiRequest(
+        `/api/Salas/${salaSelecionada}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            id: Number(salaSelecionada),
+            nome: configuracoes.nome.trim(),
+            capacidade: capacidadeSala,
+            descricao: configuracoes.descricao.trim(),
+            disponivel: configuracoes.status === 'Ativa'
+          })
+        }
+      );
+
       const dados = await apiRequest(
         `/api/Salas/${salaSelecionada}/configuracoes`,
         {
@@ -678,6 +721,24 @@ export default function GestaoDeSala() {
               : null
           })
         }
+      );
+
+      setSalas((anterior) =>
+        anterior.map((sala) => {
+          const id = sala.id ?? sala.Id;
+
+          if (String(id) !== salaSelecionada) {
+            return sala;
+          }
+
+          return {
+            ...sala,
+            nome: configuracoes.nome.trim(),
+            capacidade: capacidadeSala,
+            descricao: configuracoes.descricao.trim(),
+            disponivel: configuracoes.status === 'Ativa'
+          };
+        })
       );
 
       setMensagemConfiguracoes(
@@ -706,7 +767,7 @@ export default function GestaoDeSala() {
   return (
     <div className="gestao-sala-page dashboard-container">
 
-      {/* BARRA LATERAL */}
+      {/* BARRA LATERAL / INFERIOR MOBILE */}
       <aside className="sidebar">
         <div className="sidebar-menu">
 
@@ -721,7 +782,7 @@ export default function GestaoDeSala() {
               src="https://img.icons8.com/material-outlined/24/688596/home--v2.png"
               alt="Início"
             />
-            Início
+            <span>Início</span>
           </div>
 
           <div
@@ -735,7 +796,7 @@ export default function GestaoDeSala() {
               src="https://img.icons8.com/material-outlined/24/688596/calendar--v1.png"
               alt="Reservas"
             />
-            Reservas
+            <span>Reservas</span>
           </div>
 
           <div
@@ -749,11 +810,11 @@ export default function GestaoDeSala() {
               src="https://img.icons8.com/material-outlined/24/1b89a8/door.png"
               alt="Salas"
             />
-            Salas
+            <span>Salas</span>
           </div>
 
           <div
-            className="menu-item"
+            className="menu-item hide-mobile"
             onClick={() => navigate('/solicitacoes')}
           >
             <img
@@ -763,7 +824,7 @@ export default function GestaoDeSala() {
               src="https://img.icons8.com/material-outlined/24/688596/document--v1.png"
               alt="Solicitações"
             />
-            Solicitações
+            <span>Solicitações</span>
           </div>
 
           <div
@@ -777,7 +838,7 @@ export default function GestaoDeSala() {
               src="https://img.icons8.com/material-outlined/24/688596/user--v1.png"
               alt="Perfil"
             />
-            Perfil
+            <span>Perfil</span>
           </div>
 
         </div>
@@ -786,7 +847,7 @@ export default function GestaoDeSala() {
       {/* ÁREA PRINCIPAL */}
       <main className="main-content">
 
-        {/* BARRA SUPERIOR */}
+        {/* BARRA SUPERIOR (DESKTOP) */}
         <header className="topbar">
 
           <div className="search-container">
@@ -850,7 +911,7 @@ export default function GestaoDeSala() {
               <img
                 width="24"
                 height="24"
-                src="https://img.icons8.com/material-outlined/24/1b89a8/back--v1.png"
+                src="https://img.icons8.com/material-outlined/24/0A4F68/back--v1.png"
                 alt="Voltar"
                 onClick={() => navigate(-1)}
               />
@@ -858,6 +919,16 @@ export default function GestaoDeSala() {
               <h1 className="page-title">
                 Gestão da sala
               </h1>
+
+              {/* Avatar visível apenas no mobile */}
+              <img
+                className="mobile-profile-avatar"
+                width="30"
+                height="30"
+                src="https://img.icons8.com/material-rounded/32/0A4F68/user-male-circle.png"
+                alt="Perfil"
+                onClick={() => navigate('/perfil')}
+              />
 
             </div>
           </div>
@@ -1527,21 +1598,18 @@ export default function GestaoDeSala() {
 
               </div>
 
-              {/* MENSAGEM DE SUCESSO */}
               {mensagemConfiguracoes && (
                 <p className="mensagem-recurso-sucesso">
                   {mensagemConfiguracoes}
                 </p>
               )}
 
-              {/* MENSAGEM DE ERRO */}
               {erroConfiguracoes && (
                 <p className="erro-salas">
                   {erroConfiguracoes}
                 </p>
               )}
 
-              {/* BOTÃO SALVAR CONFIGURAÇÕES */}
               <button
                 type="button"
                 className="btn-salvar-alteracoes"

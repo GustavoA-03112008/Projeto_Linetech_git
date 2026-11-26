@@ -55,7 +55,8 @@ namespace Linetech.Controllers
 			{
 				Nome = dados.Nome,
 				Capacidade = dados.Capacidade,
-				Disponivel = dados.Disponivel
+				Disponivel = dados.Disponivel,
+				Descricao = dados.Descricao
 			};
 
 			_context.Salas.Add(sala);
@@ -86,6 +87,7 @@ namespace Linetech.Controllers
 			salaExistente.Nome = sala.Nome;
 			salaExistente.Capacidade = sala.Capacidade;
 			salaExistente.Disponivel = sala.Disponivel;
+			salaExistente.Descricao = sala.Descricao;
 
 			await _context.SaveChangesAsync();
 

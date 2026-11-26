@@ -1,145 +1,235 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./cadastroStyle.css";
-
-function IconeIcons8({ tipo, visivel }) {
-  const icones = {
-    usuario: "https://img.icons8.com/ios-glyphs/30/1b89a8/user--v1.png",
-    email: "https://img.icons8.com/ios-glyphs/30/1b89a8/filled-message.png",
-    senha: "https://img.icons8.com/ios-glyphs/30/1b89a8/lock--v1.png",
-    olhoAberto: "https://img.icons8.com/ios-glyphs/30/1b89a8/visible--v1.png",
-    olhoFechado: "https://img.icons8.com/ios-glyphs/30/1b89a8/invisible.png",
-  };
-
-  if (tipo === "olho") {
-    return (
-      <img
-        src={visivel ? icones.olhoAberto : icones.olhoFechado}
-        alt={visivel ? "Ocultar senha" : "Mostrar senha"}
-        className="icone-icons8"
-      />
-    );
-  }
-
-  return (
-    <img
-      src={icones[tipo]}
-      alt={`Ícone ${tipo}`}
-      className="icone-icons8"
-    />
-  );
-}
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './cadastroStyle.css';
 
 export default function Cadastro() {
   const navigate = useNavigate();
+
+  // Estado do perfil selecionado ('Professor' ou 'Gestor')
+  const [tipoUsuario, setTipoUsuario] = useState('Professor');
+
+  // Campos do formulário
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState('');
+
+  // Visibilidade das senhas
   const [mostrarSenha, setMostrarSenha] = useState(false);
-  const [usuario, setUsuario] = useState("");
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+  const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
 
-  function handleCadastro(e) {
+  // Feedback de erro e carregamento
+  const [erro, setErro] = useState('');
+  const [carregando, setCarregando] = useState(false);
+
+  async function handleCadastrar(e) {
     e.preventDefault();
+    setErro('');
 
-    if (!usuario.trim() || !email.trim() || !senha.trim()) {
-      alert("Preencha todos os campos!");
+    if (!nome.trim() || !email.trim() || !senha.trim() || !confirmarSenha.trim()) {
+      setErro('Preencha todos os campos obrigatórios.');
       return;
     }
 
-    alert("Cadastro realizado com sucesso!");
-    navigate("/login");
-  }
+    if (senha !== confirmarSenha) {
+      setErro('As senhas não coincidem.');
+      return;
+    }
 
-  function handleIrParaLogin() {
-    navigate("/login");
+    try {
+      setCarregando(true);
+
+      const dadosCadastro = {
+        tipoUsuario,
+        nome: nome.trim(),
+        email: email.trim(),
+        senha
+      };
+
+      console.log('Dados do cadastro:', dadosCadastro);
+      // Aqui você pode chamar sua apiRequest('/api/...', { method: 'POST', body: JSON.stringify(dadosCadastro) })
+      // navigate('/login');
+    } catch (error) {
+      setErro(error.message || 'Não foi possível realizar o cadastro.');
+    } finally {
+      setCarregando(false);
+    }
   }
 
   return (
-    <main className="cadastro-container">
-      <section className="cadastro-card">
-        {/* PARTE SUPERIOR - IDENTIDADE VISUAL */}
-        <div className="cadastro-apresentacao">
-          <img
-            src="/logo-senai.png"
-            alt="Logo SENAI"
-            className="cadastro-logo"
-            onError={(e) => { e.target.style.display = 'none'; }}
-          />
+    <div className="cadastro-container">
+      <div className="cadastro-wrapper">
 
-          <h1>SENAI</h1>
-          <h2>Gestão de Salas</h2>
-
-          <p>
-            Organize, reserve e aproveite os espaços da sua unidade.
-          </p>
+        {/* Título superior simples */}
+        <div className="cadastro-topo">
+          <span className="cadastro-topo-texto">Cadastro</span>
         </div>
 
-        {/* PARTE INFERIOR - FORMULÁRIO */}
-        <div className="cadastro-form-area">
-          <form onSubmit={handleCadastro}>
-            <div className="cadastro-titulo">
-              <h2>Crie sua conta</h2>
-              <p>Preencha os dados abaixo para se cadastrar.</p>
-            </div>
+        {/* Card Principal */}
+        <div className="cadastro-card">
+          <h1 className="cadastro-titulo">Crie sua conta</h1>
+          <p className="cadastro-subtitulo">
+            Preencha os dados abaixo para se cadastrar.
+          </p>
 
-            <div className="cadastro-input">
-              <IconeIcons8 tipo="usuario" />
+          {/* Seletor de Tipo de Usuário */}
+          <div className="perfil-section">
+            <label className="perfil-label">Tipo de usuário</label>
+            <span className="perfil-descricao">
+              Selecione o perfil que melhor representa você.
+            </span>
+
+            <div className="perfil-opcoes">
+              {/* Opção Professor */}
+              <div
+                className={`perfil-card ${tipoUsuario === 'Professor' ? 'ativo' : ''}`}
+                onClick={() => setTipoUsuario('Professor')}
+              >
+                <span className="radio-indicador">
+                  {tipoUsuario === 'Professor' && <span className="radio-ponto" />}
+                </span>
+                <svg className="perfil-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <path d="M22 10L12 5 2 10l10 5 10-5z" />
+                  <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                  <path d="M22 10v6" />
+                </svg>
+                <span className="perfil-nome">Professor</span>
+              </div>
+
+              {/* Opção Gestor */}
+              <div
+                className={`perfil-card ${tipoUsuario === 'Gestor' ? 'ativo' : ''}`}
+                onClick={() => setTipoUsuario('Gestor')}
+              >
+                <span className="radio-indicador">
+                  {tipoUsuario === 'Gestor' && <span className="radio-ponto" />}
+                </span>
+                <svg className="perfil-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+                <span className="perfil-nome">Gestor</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Formulário */}
+          <form onSubmit={handleCadastrar} className="cadastro-form">
+            {/* Nome completo */}
+            <div className="cadastro-input-box">
+              <svg className="campo-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
               <input
                 type="text"
-                placeholder="Nome de usuário"
-                value={usuario}
-                onChange={(e) => setUsuario(e.target.value)}
-                required
+                placeholder="Nome completo"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
               />
             </div>
 
-            <div className="cadastro-input">
-              <IconeIcons8 tipo="email" />
+            {/* E-mail */}
+            <div className="cadastro-input-box">
+              <svg className="campo-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <rect x="2" y="4" width="20" height="16" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+              </svg>
               <input
                 type="email"
                 placeholder="E-mail"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
               />
             </div>
 
-            <div className="cadastro-input">
-              <IconeIcons8 tipo="senha" />
+            {/* Senha */}
+            <div className="cadastro-input-box">
+              <svg className="campo-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
               <input
-                type={mostrarSenha ? "text" : "password"}
+                type={mostrarSenha ? 'text' : 'password'}
                 placeholder="Senha"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
-                required
-                minLength={6}
               />
               <button
                 type="button"
-                className="cadastro-olho"
-                onClick={() => setMostrarSenha((prev) => !prev)}
-                aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+                className="btn-olho"
+                onClick={() => setMostrarSenha(!mostrarSenha)}
+                tabIndex="-1"
               >
-                <IconeIcons8 tipo="olho" visivel={mostrarSenha} />
+                {mostrarSenha ? (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
               </button>
             </div>
 
-            <button type="submit" className="cadastro-botao">
-              Cadastrar
-            </button>
-
-            <div className="cadastro-login">
-              <span>Já tem uma conta?</span>
+            {/* Confirmar senha */}
+            <div className="cadastro-input-box">
+              <svg className="campo-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <input
+                type={mostrarConfirmarSenha ? 'text' : 'password'}
+                placeholder="Confirmar senha"
+                value={confirmarSenha}
+                onChange={(e) => setConfirmarSenha(e.target.value)}
+              />
               <button
                 type="button"
-                className="cadastro-btn-entrar"
-                onClick={handleIrParaLogin}
+                className="btn-olho"
+                onClick={() => setMostrarConfirmarSenha(!mostrarConfirmarSenha)}
+                tabIndex="-1"
               >
-                Entrar
+                {mostrarConfirmarSenha ? (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
               </button>
             </div>
+
+            {erro && <p className="cadastro-erro">{erro}</p>}
+
+            <button
+              type="submit"
+              className="btn-cadastrar"
+              disabled={carregando}
+            >
+              {carregando ? 'Cadastrando...' : 'Cadastrar'}
+            </button>
           </form>
         </div>
-      </section>
-    </main>
+
+        {/* Link inferior */}
+        <p className="cadastro-rodape-link">
+          Já tem uma conta?{' '}
+          <span onClick={() => navigate('/login')}>Entrar</span>
+        </p>
+
+      </div>
+    </div>
   );
 }

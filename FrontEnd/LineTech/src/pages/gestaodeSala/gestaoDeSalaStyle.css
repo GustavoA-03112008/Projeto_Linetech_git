@@ -1,4 +1,3 @@
-
 /* =========================================
    CONFIGURAÇÕES GERAIS
 ========================================= */
@@ -14,6 +13,10 @@
   background: #F4FBFD;
   color: #0D465C;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.gestao-sala-page .mobile-profile-avatar {
+  display: none;
 }
 
 /* =========================================
@@ -406,8 +409,8 @@
 }
 
 .gestao-sala-page .info-section {
-  padding: 5px 0 23px;
-  margin-bottom: 20px;
+  padding: 8px 0 25px;
+  margin-bottom: 22px;
   border-bottom: 1px solid #E1F0F5;
 }
 
@@ -416,7 +419,7 @@
 }
 
 .gestao-sala-page .info-section h3 {
-  margin: 0 0 13px;
+  margin: 0 0 18px;
   color: #0A4F68;
   font-size: 16px;
   font-weight: 600;
@@ -532,14 +535,111 @@
 }
 
 /* =========================================
+   CONFIGURAÇÕES E PERMISSÕES
+========================================= */
+
+.gestao-sala-page .campo-configuracao {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.gestao-sala-page .campo-configuracao label {
+  color: #0D465C;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.gestao-sala-page .campo-configuracao input,
+.gestao-sala-page .campo-configuracao select,
+.gestao-sala-page .campo-configuracao textarea {
+  width: 100%;
+  max-width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #D8ECF2;
+  border-radius: 7px;
+  outline: none;
+  background: #FFFFFF;
+  color: #0D465C;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gestao-sala-page .campo-configuracao textarea {
+  min-height: 90px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.gestao-sala-page .campo-configuracao input:focus,
+.gestao-sala-page .campo-configuracao select:focus,
+.gestao-sala-page .campo-configuracao textarea:focus {
+  border-color: #1B89A8;
+  box-shadow: 0 0 0 3px rgba(27, 137, 168, 0.10);
+}
+
+.gestao-sala-page .campo-configuracao input::placeholder,
+.gestao-sala-page .campo-configuracao textarea::placeholder {
+  color: #9AAEB8;
+}
+
+.gestao-sala-page .permissao-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 17px;
+  margin-bottom: 12px;
+  background: #F4FBFD;
+  border: 1px solid #D8ECF2;
+  border-radius: 8px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.gestao-sala-page .permissao-item:hover {
+  background: #EDF8FB;
+  border-color: #B9DFE9;
+}
+
+.gestao-sala-page .permissao-item strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #0D465C;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.gestao-sala-page .permissao-item .light-text {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.gestao-sala-page .permissao-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  margin: 0;
+  accent-color: #1B89A8;
+  cursor: pointer;
+}
+
+.gestao-sala-page .info-section .permissao-item:last-child {
+  margin-bottom: 0;
+}
+
+/* =========================================
    BOTÃO SALVAR ALTERAÇÕES
 ========================================= */
 
 .gestao-sala-page .btn-salvar-alteracoes {
   display: block;
-  min-width: 150px;
+  min-width: 175px;
   margin: 10px 0 0 auto;
-  padding: 11px 20px;
+  padding: 12px 22px;
   border: none;
   border-radius: 7px;
   background: #1B89A8;
@@ -547,11 +647,15 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .gestao-sala-page .btn-salvar-alteracoes:hover {
   background: #0A4F68;
+}
+
+.gestao-sala-page .btn-salvar-alteracoes:active {
+  transform: scale(0.98);
 }
 
 /* =========================================
@@ -580,10 +684,6 @@
   border-radius: 14px;
   box-shadow: 0 12px 35px rgba(10, 79, 104, 0.18);
 }
-
-/* =========================================
-   CABEÇALHO DO MODAL
-========================================= */
 
 .gestao-sala-page .modal-recursos-header {
   display: flex;
@@ -620,10 +720,6 @@
 .gestao-sala-page .modal-recursos-fechar:hover {
   color: #0A4F68;
 }
-
-/* =========================================
-   LISTA DE RECURSOS NO MODAL
-========================================= */
 
 .gestao-sala-page .modal-recursos-lista {
   display: flex;
@@ -677,10 +773,6 @@
   font-size: 12px;
 }
 
-/* =========================================
-   MENSAGEM DE SUCESSO DO MODAL
-========================================= */
-
 .gestao-sala-page .mensagem-recurso-sucesso {
   padding: 10px;
   margin-bottom: 15px;
@@ -690,10 +782,6 @@
   font-size: 13px;
   line-height: 1.5;
 }
-
-/* =========================================
-   AÇÕES DO MODAL
-========================================= */
 
 .gestao-sala-page .modal-recursos-acoes {
   display: flex;
@@ -740,7 +828,7 @@
 }
 
 /* =========================================
-   RESPONSIVIDADE
+   RESPONSIVIDADE TABLET
 ========================================= */
 
 @media (max-width: 900px) {
@@ -758,270 +846,207 @@
   }
 }
 
-@media (max-width: 650px) {
+/* =========================================
+   RESPONSIVIDADE MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+  .gestao-sala-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+    padding-bottom: 75px;
+  }
+
+  /* Barra inferior fixa */
   .gestao-sala-page .sidebar {
-    width: 65px;
-    min-width: 65px;
-    padding: 15px 8px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    width: 100%;
+    min-width: 100%;
+    height: 68px;
+    min-height: 68px;
+    padding: 0 10px;
+    background: #FFFFFF;
+    border-right: none;
+    border-top: 1px solid #D8ECF2;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
   }
 
   .gestao-sala-page .sidebar-menu {
-    margin-top: 20px;
+    width: 100%;
+    margin-top: 0;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    gap: 0;
   }
 
   .gestao-sala-page .menu-item {
+    flex-direction: column;
     justify-content: center;
-    padding: 12px 5px;
-    font-size: 0;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    font-size: 11px;
+    background: transparent !important;
+  }
+
+  .gestao-sala-page .menu-item.active {
+    color: #0A4F68;
+    font-weight: 700;
   }
 
   .gestao-sala-page .menu-item .menu-icon {
-    width: 23px;
-    height: 23px;
+    width: 22px;
+    height: 22px;
   }
 
+  .gestao-sala-page .menu-item.hide-mobile {
+    display: none;
+  }
+
+  /* Conteúdo principal ocupando 100% da tela */
+  .gestao-sala-page .main-content {
+    width: 100%;
+    margin-left: 0 !important;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Esconde a topbar desktop no mobile */
   .gestao-sala-page .topbar {
-    height: auto;
-    min-height: 65px;
-    padding: 12px 15px;
-  }
-
-  .gestao-sala-page .search-container {
-    width: 55%;
-  }
-
-  .gestao-sala-page .topbar-actions {
-    gap: 12px;
-  }
-
-  .gestao-sala-page .profile-section {
-    font-size: 0;
+    display: none;
   }
 
   .gestao-sala-page .dashboard-content {
-    padding: 20px 15px;
+    width: 100%;
+    padding: 20px 18px 30px;
+  }
+
+  /* Cabeçalho Mobile: Seta + Título + Avatar */
+  .gestao-sala-page .gestao-title-row {
+    margin-bottom: 18px;
+  }
+
+  .gestao-sala-page .gestao-title {
+    gap: 12px;
   }
 
   .gestao-sala-page .page-title {
-    font-size: 21px;
+    font-size: 20px;
+    color: #0A4F68;
   }
 
+  .gestao-sala-page .mobile-profile-avatar {
+    display: block;
+    cursor: pointer;
+    margin-left: 4px;
+  }
+
+  /* Pesquisa de sala */
+  .gestao-sala-page .pesquisa-sala-container {
+    max-width: 100%;
+    height: 40px;
+    margin-bottom: 12px;
+  }
+
+  .gestao-sala-page .lista-resultados-salas {
+    max-width: 100%;
+  }
+
+  /* Cartão da sala */
   .gestao-sala-page .room-header-card {
     align-items: flex-start;
-    padding: 17px;
+    padding: 16px 0;
+    margin: 12px 0 18px;
+    background: transparent;
+    border: none;
   }
 
   .gestao-sala-page .room-header-left {
-    gap: 10px;
+    gap: 14px;
   }
 
   .gestao-sala-page .room-icon-box {
-    width: 48px;
-    height: 48px;
+    width: 60px;
+    height: 60px;
+    background: #CDEAF2;
   }
 
   .gestao-sala-page .room-icon-box img {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
   }
 
   .gestao-sala-page .room-info-text h2 {
-    font-size: 16px;
+    font-size: 17px;
+    margin-bottom: 4px;
   }
 
   .gestao-sala-page .room-info-text p {
+    font-size: 12px;
+  }
+
+  .gestao-sala-page .status-badge-active {
+    padding: 4px 10px;
     font-size: 11px;
   }
 
+  /* Abas (Informações | Permissões | Configurações) */
   .gestao-sala-page .tabs-container {
-    gap: 18px;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 18px;
     overflow-x: auto;
   }
 
   .gestao-sala-page .tab-button {
     white-space: nowrap;
-    font-size: 12px;
+    font-size: 13px;
+    padding: 10px 6px;
   }
 
+  .gestao-sala-page .tab-button.active {
+    background: #E4F4F8;
+    border-radius: 8px 8px 0 0;
+    padding: 10px 12px;
+    color: #0A4F68;
+  }
+
+  /* Card principal no mobile */
   .gestao-sala-page .info-main-card {
-    padding: 17px;
+    padding: 0;
+    background: transparent;
+    border: none;
+  }
+
+  .gestao-sala-page .info-section {
+    padding: 4px 0 18px;
+    margin-bottom: 16px;
+  }
+
+  .gestao-sala-page .info-section h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
   }
 
   .gestao-sala-page .section-title-row {
-    align-items: flex-start;
+    align-items: center;
   }
 
   .gestao-sala-page .btn-adicionar-item {
     white-space: nowrap;
-  }
-
-  .gestao-sala-page .modal-recursos {
-    padding: 18px;
-  }
-
-  .gestao-sala-page .modal-recursos-acoes {
-    flex-direction: column-reverse;
-  }
-
-  .gestao-sala-page .modal-recursos-acoes button {
-    width: 100%;
-  }
-}
-
-
-
-
-
-/* =========================================
-   CONFIGURAÇÕES E PERMISSÕES
-========================================= */
-
-.gestao-sala-page .info-section {
-  padding: 8px 0 25px;
-  margin-bottom: 22px;
-  border-bottom: 1px solid #E1F0F5;
-}
-
-/* Títulos das seções */
-
-.gestao-sala-page .info-section h3 {
-  margin: 0 0 18px;
-  color: #0A4F68;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-/* Campos de configuração */
-
-.gestao-sala-page .campo-configuracao {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 18px;
-}
-
-.gestao-sala-page .campo-configuracao label {
-  color: #0D465C;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.gestao-sala-page .campo-configuracao input,
-.gestao-sala-page .campo-configuracao select,
-.gestao-sala-page .campo-configuracao textarea {
-  width: 100%;
-  max-width: 100%;
-  min-height: 42px;
-  padding: 10px 12px;
-  border: 1px solid #D8ECF2;
-  border-radius: 7px;
-  outline: none;
-  background: #FFFFFF;
-  color: #0D465C;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 13px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.gestao-sala-page .campo-configuracao textarea {
-  min-height: 90px;
-  resize: vertical;
-  line-height: 1.5;
-}
-
-.gestao-sala-page .campo-configuracao input:focus,
-.gestao-sala-page .campo-configuracao select:focus,
-.gestao-sala-page .campo-configuracao textarea:focus {
-  border-color: #1B89A8;
-  box-shadow: 0 0 0 3px rgba(27, 137, 168, 0.10);
-}
-
-.gestao-sala-page .campo-configuracao input::placeholder,
-.gestao-sala-page .campo-configuracao textarea::placeholder {
-  color: #9AAEB8;
-}
-
-/* Linhas de permissões e opções */
-
-.gestao-sala-page .permissao-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 16px 17px;
-  margin-bottom: 12px;
-  background: #F4FBFD;
-  border: 1px solid #D8ECF2;
-  border-radius: 8px;
-  transition: background 0.2s, border-color 0.2s;
-}
-
-.gestao-sala-page .permissao-item:hover {
-  background: #EDF8FB;
-  border-color: #B9DFE9;
-}
-
-.gestao-sala-page .permissao-item strong {
-  display: block;
-  margin-bottom: 5px;
-  color: #0D465C;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.gestao-sala-page .permissao-item .light-text {
-  margin: 0;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-/* Checkbox */
-
-.gestao-sala-page .permissao-item input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  min-width: 18px;
-  margin: 0;
-  accent-color: #1B89A8;
-  cursor: pointer;
-}
-
-/* Botão salvar nas abas */
-
-.gestao-sala-page .btn-salvar-alteracoes {
-  min-width: 175px;
-  padding: 12px 22px;
-  margin-top: 5px;
-  border: none;
-  border-radius: 7px;
-  background: #1B89A8;
-  color: #FFFFFF;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
-}
-
-.gestao-sala-page .btn-salvar-alteracoes:hover {
-  background: #0A4F68;
-}
-
-.gestao-sala-page .btn-salvar-alteracoes:active {
-  transform: scale(0.98);
-}
-
-/* Separação visual das opções */
-
-.gestao-sala-page .info-section .permissao-item:last-child {
-  margin-bottom: 0;
-}
-
-/* Responsividade */
-
-@media (max-width: 650px) {
-  .gestao-sala-page .info-section {
-    padding-bottom: 20px;
-    margin-bottom: 18px;
+    padding: 6px 10px;
+    font-size: 11px;
   }
 
   .gestao-sala-page .permissao-item {
@@ -1041,8 +1066,26 @@
     margin-bottom: 15px;
   }
 
+  /* Botão Salvar Alterações azul escuro full-width */
   .gestao-sala-page .btn-salvar-alteracoes {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    background: #0A4F68;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+
+  /* Modal */
+  .gestao-sala-page .modal-recursos {
+    padding: 18px;
+  }
+
+  .gestao-sala-page .modal-recursos-acoes {
+    flex-direction: column-reverse;
+  }
+
+  .gestao-sala-page .modal-recursos-acoes button {
     width: 100%;
   }
 }
-  

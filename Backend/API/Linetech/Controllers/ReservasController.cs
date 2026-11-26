@@ -72,6 +72,43 @@ namespace Linetech.Controllers
 			return Ok(reservas);
 		}
 
+		// Listar todas as reservas do usuário logado
+		[Authorize]
+		[HttpGet("minhas")]
+		public async Task<IActionResult> ListarMinhasReservas()
+		{
+			var usuarioIdTexto = User.FindFirstValue(
+				ClaimTypes.NameIdentifier
+			);
+
+			if (!int.TryParse(usuarioIdTexto, out int usuarioId))
+			{
+				return Unauthorized("Usuário não identificado.");
+			}
+
+			var reservas = await (
+				from reserva in _context.Reservas.AsNoTracking()
+				join sala in _context.Salas.AsNoTracking()
+					on reserva.SalaId equals sala.Id
+				where reserva.UsuarioId == usuarioId
+				orderby reserva.DataInicio descending
+				select new
+				{
+					reserva.Id,
+					reserva.UsuarioId,
+					reserva.SalaId,
+					NomeSala = sala.Nome,
+					reserva.DataInicio,
+					reserva.DataFim,
+					reserva.Finalidade,
+					reserva.Status,
+					reserva.DataCriacao
+				}
+			).ToListAsync();
+
+			return Ok(reservas);
+		}
+
 		// Consultar uma reserva pelo ID
 		[HttpGet("{id}")]
 		public async Task<IActionResult> BuscarReserva(int id)
